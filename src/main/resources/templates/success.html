@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/layout/head :: head"></head>
+<!-- Header -->
+<div th:replace="/layout/header :: header"></div>
+<body>
+<!-- Side bar -->
+<div th:replace="/layout/sidebar :: sidebar"></div>
+
+<div class="container-fluid">
+  <main id="main" class="main">
+    <h1>403 - Forbidden</h1>
+    <p>Sorry, you don't have permission to access this page.</p>
+    <a th:href="@{/admin/logon}">Back to Login</a>
+  </main>
+</div>
+
+<!-- End #main -->
+<!-- ======= Footer ======= -->
+<div th:replace="/layout/footer :: footer"></div>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:replace="/layout/script :: script"></div>
+
+</body>
+</html>

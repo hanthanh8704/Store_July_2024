@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="/layout/head :: head"></div>
+</head>
+<!-- Header -->
+<div th:replace="/layout/header :: header"></div>
+<body>
+<!-- Side bar -->
+<div th:replace="/layout/sidebar :: sidebar"></div>
+
+<div class="container-fluid">
+    <h2 class="text-center">Thêm mới màu sắc</h2>
+    <main id="main" class="main">
+        <form th:object="${color}" th:action="@{/admin/color/store}" method="post">
+            <div>
+                <label for="ma" class="form-label">Mã</label>
+                <input type="text" name="ma" class="form-control" id="ma"  placeholder="Nhập mã"/>
+                <div th:if="${#fields.hasErrors('ma')}" class="alert alert-danger mt-3" role="alert" th:errors="*{ma}"></div>
+            </div>
+            <div>
+                <label for="ten" class="form-label">Tên</label>
+                <input type="text" name="ten" id="ten" class="form-control" placeholder="Nhập tên"/>
+                <div th:if="${#fields.hasErrors('ten')}" class="alert alert-danger mt-3" role="alert" th:errors="*{ten}"></div>
+            </div>
+            <div>
+                <label for="trangThai" class="form-label">Trạng thái</label>
+                <select class="form-select" name="trangThai" id="trangThai">
+                    <option value="">Lựa chọn</option>
+                    <option value="0">Active</option>
+                    <option value="1">Inactive</option>
+                </select>
+                <div th:if="${#fields.hasErrors('trangThai')}" class="alert alert-danger mt-3" role="alert" th:errors="*{trangThai}"></div>
+            </div>
+            <button class="btn btn-success mt-3" type="submit">Save</button>
+        </form>
+    </main>
+</div>
+
+
+<!-- End #main -->
+<!-- ======= Footer ======= -->
+<div th:replace="/layout/footer :: footer"></div>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:replace="/layout/script :: script"></div>
+
+</body>
+</html>

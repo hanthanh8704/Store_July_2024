@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/layout/head :: head"></head>
+<!-- Header -->
+<div th:replace="/layout/header :: header"></div>
+<body>
+<!-- Side bar -->
+<div th:replace="/layout/sidebar :: sidebar"></div>
+
+<div class="container-fluid">
+    <main id="main" class="main">
+        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+        <h2 class="text-center">Bán Hàng Tại Quầy</h2>
+        <div class="datatable-container">
+            <div class="row">
+                <div class="col-md-8">
+                    <h4>Danh sách hóa đơn</h4>
+                    <table class="table datatable datatable-table">
+                        <thead class="table-warning">
+                        <tr>
+                            <th data-sortable="true">ID</th>
+                            <th data-sortable="true">Nhân Viên</th>
+                            <th data-sortable="true">Khách Hàng</th>
+                            <th data-sortable="true">Ngày Tạo</th>
+                            <th data-sortable="true">Trạng thái</th>
+                            <th data-sortable="true">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody th:each="pr : ${hoadon}">
+                        <tr th:if="${pr.trangThai == 0}">
+                            <td th:text="${pr.id}"></td>
+                            <td th:text="${pr.nhanVien.getTen()}"></td>
+                            <td th:text="${pr.khachHang.getTen()}"></td>
+                            <td th:text="${pr.ngayMuaHang}"></td>
+                            <td th:text="${pr.trangThai == 1 ? 'Đã thanh toán' : 'Chờ thanh toán'}"></td>
+                            <td style="width: 1px" class="text-nowrap">
+                                <a type="button" class="btn btn-warning"
+                                   th:href="@{/admin/billDetails/{id}(id=${pr.id})}">Detail</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Danh sách hóa đơn chi tiết</h4>
+                    <table class="table datatable datatable-table">
+                        <thead class="table-warning">
+                        <tr>
+                            <th data-sortable="true">ID</th>
+                            <th data-sortable="true">Hóa đơn ID</th>
+                            <th data-sortable="true">Tên Sản Phẩm</th>
+                            <th data-sortable="true">Số Lượng</th>
+                            <th data-sortable="true">Đơn Giá</th>
+                            <th data-sortable="true">Thành Tiền</th>
+                            <th data-sortable="true">Trạng thái</th>
+                            <th data-sortable="true">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody th:each="pr : ${hdct}">
+                        <tr>
+                            <td th:text="${pr.id}"></td>
+                            <td th:text="${pr.hoaDonID.id}"></td>
+                            <td th:text="${pr.spctID.sanPham.ten}"></td>
+                            <td th:text="${pr.soLuong}"></td>
+                            <td th:text="${pr.donGia}"></td>
+                            <td th:text="${pr.soLuong * pr.donGia}"></td> <!-- Tính thành tiền -->
+                            <td th:text="${pr.trangThai}"></td>
+                            <td style="width: 1px" class="text-nowrap">
+                                <a type="button" class="btn btn-warning">Update</a>
+                                <a type="button" class="btn btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-4">
+                    <h3>Thông tin đơn hàng</h3>
+                    <div>
+                        <form method="get" th:action="@{/admin/search}">
+                            <div class="mt-3">
+                                <label class="form-label">SĐT</label>
+                                <input type="text" name="sdt" id="sdt" class="form-control"
+                                       placeholder="Nhập sđt"/>
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label">Tên</label>
+                                <input type="text" th:value="${khachHang != null ? khachHang.ten : ''}"
+                                       name="ten" id="ten" class="form-control" readonly/>
+                            </div>
+                            <button type="submit" class="btn btn-success mt-3">Search</button>
+                        </form>
+
+                        <div class="mt-3" th:if="${error}">
+                            <span class="text-danger" th:text="${error}"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <form th:action="@{/admin/create-order}" method="post">
+                            <div class="mt-3">
+                                <label class="form-label">ID Hóa Đơn</label>
+                                <input type="text" name="idHoaDon" id="idHoaDon" class="form-control" disabled/>
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label">Tên NV</label>
+                                <input type="text" name="tenNV" id="tenNV" class="form-control" disabled/>
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label">Tổng Tiền</label>
+                                <input type="text" name="tongTien" id="tongTien" class="form-control" disabled/>
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label">Tiền Khách Đưa</label>
+                                <input type="text" name="tienKhachDua" id="tienKhachDua" class="form-control"/>
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label">Tiền Thừa</label>
+                                <input type="text" name="tienThua" id="tienThua" class="form-control" disabled/>
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-primary" type="submit">Tạo Hóa Đơn</button>
+                                <button class="btn btn-success" type="submit">Thanh toán</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <h4>Danh sách chi tiết sản phẩm</h4>
+                <table class="table datatable datatable-table">
+                    <thead class="table-warning">
+                    <tr>
+                        <th>ID</th>
+                        <th>Mã</th>
+                        <th>Tên Sản Phẩm</th>
+                        <th>Tên kích thước</th>
+                        <th>Tên màu sắc</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>Trạng thái</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody th:each="pr : ${spct}">
+                    <tr>
+                        <td th:text="${pr.id}"></td>
+                        <td th:text="${pr.ma}"></td>
+                        <td th:text="${pr.sanPham.getTen()}"></td>
+                        <td th:text="${pr.kichThuoc.getTen()}"></td>
+                        <td th:text="${pr.mauSac.getTen()}"></td>
+                        <td th:text="${pr.soLuong}"></td>
+                        <td th:text="${pr.donGia}"></td>
+                        <td th:text="${pr.trangThai}"></td>
+                        <td>
+                            <!-- Button để mở modal -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#modal_${pr.id}">
+                                <i class="fa-solid fa-plus"></i> Thêm vào giỏ
+                            </button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="modal_${pr.id}" tabindex="-1"
+                                 aria-labelledby="modalLabel_${pr.id}"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalLabel_${pr.id}">Nhập số lượng muốn mua</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Form nhập số lượng -->
+                                            <form method="post" th:action="@{/admin/add}">
+                                                <input type="hidden" name="spctId" th:value="${pr.id}"/>
+                                                <!-- Truyền ID của sản phẩm chi tiết -->
+                                                <div class="mb-3">
+                                                    <label for="quantity_${pr.id}" class="form-label">Số lượng:</label>
+                                                    <input type="number" class="form-control" id="quantity_${pr.id}"
+                                                           name="quantity" required>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!-- Điều khiển phân trang -->
+                <nav>
+                    <ul class="pagination d-flex justify-content-center">
+                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/admin/orders(page=${currentPage - 1}, size=${pageSize})}">Previous</a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+                            th:classappend="${currentPage == i} ? 'active'">
+                            <a class="page-link" th:href="@{/admin/orders(page=${i}, size=${pageSize})}" th:text="${i}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                            <a class="page-link" th:href="@{/admin/orders(page=${currentPage + 1}, size=${pageSize})}">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<!-- End #main -->
+<!-- ======= Footer ======= -->
+<div th:replace="/layout/footer :: footer"></div>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:replace="/layout/script :: script"></div>
+
+</body>
+</html>
+

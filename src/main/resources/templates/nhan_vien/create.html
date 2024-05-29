@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="/layout/head :: head"></div>
+</head>
+<!-- Header -->
+<div th:replace="/layout/header :: header"></div>
+<body>
+<!-- Side bar -->
+<div th:replace="/layout/sidebar :: sidebar"></div>
+
+<div class="container-fluid">
+    <h2 class="text-center">Thêm mới nhân viên</h2>
+    <main id="main" class="main">
+        <form th:object="${employee}" th:action="@{/admin/employee/store}" action="#" method="post">
+            <div>
+                <label th:text="Mã" for="maNV" class="form-label">Mã khách hàng</label>
+                <input type="text" name="maNV" class="form-control" id="maNV"  placeholder="Nhập mã"/>
+            </div>
+            <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
+                <p th:text="${error}"></p>
+            </div>
+            <div>
+                <label class="form-label" th:text="Tên" for="ten"></label>
+                <input type="text" name="ten" id="ten" class="form-control" placeholder="Nhập tên"/>
+            </div>
+            <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
+                <p th:text="${error}"></p>
+            </div>
+            <div>
+                <label class="form-label" th:text="Username" for="ten"></label>
+                <input type="text" name="username" id="username" class="form-control" placeholder="Nhập username"/>
+            </div>
+            <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
+                <p th:text="${error}"></p>
+            </div>
+            <div>
+                <label class="form-label" th:text="Password" for="ten"></label>
+                <input type="text" name="password" id="password" class="form-control" placeholder="Nhập password"/>
+            </div>
+            <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
+                <p th:text="${error}"></p>
+            </div>
+            <div>
+                <label class="form-label" th:text="${trangThai}" for="trangThai"></label>
+                <select class="form-select" name="trangThai" id="trangThai">
+                    <option value="">Lựa chọn</option>
+                    <option value="0">Active</option>
+                    <option value="1">Inactive</option>
+                </select>
+            </div>
+            <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
+                <p th:text="${error}"></p>
+            </div>
+            <button class="btn btn-success" type="submit">Save</button>
+        </form>
+    </main>
+</div>
+
+<!-- End #main -->
+<!-- ======= Footer ======= -->
+<div th:replace="/layout/footer :: footer"></div>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:replace="/layout/script :: script"></div>
+
+</body>
+</html>
