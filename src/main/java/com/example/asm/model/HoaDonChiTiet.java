@@ -37,4 +37,8 @@ public class HoaDonChiTiet {
     @JoinColumn(name = "spct_id")
     private SanPhamChiTiet sanPhamChiTiet;
 
+    // Phương thức tính thành tiền
+    public BigDecimal getThanhTien() {
+        return donGia.multiply(new BigDecimal(soLuong));
+    }
 }

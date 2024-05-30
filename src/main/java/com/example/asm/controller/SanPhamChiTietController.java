@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
@@ -113,60 +114,58 @@ public class SanPhamChiTietController {
     }
 
 
-//    // View edit
-//    @GetMapping("spct/edit/{id}")
-//    public String edit(@PathVariable("id") Integer id, Model model) {
-//        if (!isLoggedIn()) {
-//            return "redirect:/admin/logon";
-//        } else {
-//            SanPhamChiTiet spct = sanPhamChiTietRepository.findById(id);
-//            model.addAttribute("spct", spct);
-//            model.addAttribute("product", sanPhamRepository.findAll());
-//            model.addAttribute("color", mauSacRepository.findAll());
-//            model.addAttribute("size", kichThuocRepository.findAll());
-//            return "san_pham_chi_tiet/edit";
-//        }
-//    }
-//
-//    // Update
-//    @PostMapping("spct/update/{id}")
-//    public String update(@PathVariable("id") Integer id,
-//                         @Valid SanPhamChiTiet sanPham,
-//                         BindingResult result,
-//                         Model model) {
-//        if (!isLoggedIn()) {
-//            return "redirect:/admin/logon";
-//        } else {
-//            if (result.hasErrors()) {
-//                Map<String, String> fields = new HashMap<>();
-//                for (FieldError error : result.getFieldErrors()) {
-//                    fields.put(error.getField(), error.getDefaultMessage());
-//                }
-//                model.addAttribute("product", sanPhamRepository.findAll());
-//                model.addAttribute("color", mauSacRepository.findAll());
-//                model.addAttribute("size", kichThuocRepository.findAll());
-//                model.addAttribute("fields", fields);
-//                model.addAttribute("spct", sanPham); // Retain the form data
-//                return "san_pham_chi_tiet/edit";
-//            }
-//            sanPham.setId(id);
-//            this.sanPhamChiTietRepository.update(sanPham);
-//            return "redirect:/admin/spct";
-//        }
-//    }
-//
-//
-//    // Delete
-//    @GetMapping("spct/delete/{id}")
-//    public String deleteSanPham(@PathVariable Integer id) {
-//        if (!isLoggedIn()) {
-//            return "redirect:/admin/logon";
-//        } else {
-//            sanPhamChiTietRepository.deleteById(id);
-//            return "redirect:/admin/spct";
-//        }
-//    }
-//
+    // View edit
+// View edit
+    @GetMapping("spct/edit/{id}")
+    public String edit(@PathVariable("id") Integer id, Model model) {
+        if (!isLoggedIn()) {
+            return "redirect:/admin/logon";
+        } else {
+            Optional<SanPhamChiTiet> spct = sanPhamChiTietService.findSanPhamChiTietById(id);
+            if (spct.isPresent()) {
+                model.addAttribute("sanPhamChiTiet", spct.get()); // Đặt attribute với key đúng
+                model.addAttribute("product", sanPhamService.getAllSanPham());
+                model.addAttribute("color", mauSacService.getAllMauSac());
+                model.addAttribute("size", kichThuocService.getAllKichThuoc());
+                return "san_pham_chi_tiet/edit";
+            } else {
+                // Xử lý trường hợp không tìm thấy sản phẩm chi tiết
+                return "redirect:/admin/spct"; // Redirect hoặc thông báo lỗi tuỳ vào yêu cầu của bạn
+            }
+        }
+    }
+
+    //
+    // Update
+    @PostMapping("spct/update/{id}")
+    public String update(@PathVariable("id") Integer id,
+                         @Valid SanPhamChiTiet sanPham,
+                         BindingResult result,
+                         Model model) {
+        if (!isLoggedIn()) {
+            return "redirect:/admin/logon";
+        } else {
+            if (result.hasErrors()) {
+                return "san_pham_chi_tiet/edit";
+            }
+            sanPham.setId(id);
+            this.sanPhamChiTietService.saveSanPhamChiTiet(sanPham);
+            return "redirect:/admin/spct";
+        }
+    }
+
+
+    // Delete
+    @GetMapping("spct/delete/{id}")
+    public String deleteSanPham(@PathVariable Integer id) {
+        if (!isLoggedIn()) {
+            return "redirect:/admin/logon";
+        } else {
+            sanPhamChiTietService.deleteSanPhamChiTiet(id);
+            return "redirect:/admin/spct";
+        }
+    }
+
 //    @Autowired
 //    private ExcelConfig excelConfig;
 //

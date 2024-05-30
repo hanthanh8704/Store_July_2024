@@ -3,6 +3,7 @@ package com.example.asm.service.impl;
 import com.example.asm.model.HoaDon;
 import com.example.asm.model.HoaDonChiTiet;
 import com.example.asm.model.KhachHang;
+import com.example.asm.repository.HoaDonChiTietRepository;
 import com.example.asm.repository.HoaDonRepository;
 import com.example.asm.service.HoaDonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +21,8 @@ import java.util.Optional;
 public class HoaDonImpl implements HoaDonService {
     @Autowired
     private HoaDonRepository hoaDonRepository;
+    @Autowired
+    private HoaDonChiTietRepository hoaDonChiTietRepository;
 
     @Override
     public List<HoaDon> fillAllHoaDon() {
@@ -26,8 +30,18 @@ public class HoaDonImpl implements HoaDonService {
     }
 
     @Override
+    public void saveHoaDon(HoaDon hoaDon) {
+        hoaDonRepository.save(hoaDon);
+    }
+
+    @Override
     public Optional<HoaDon> findHoaDonById(Integer id) {
         return hoaDonRepository.findById(id);
+    }
+
+    @Override
+    public HoaDon findById(Integer id) {
+        return hoaDonRepository.findHoaDonById(id);
     }
 
     @Override
@@ -57,6 +71,55 @@ public class HoaDonImpl implements HoaDonService {
 
         list = list.subList(start, end);
         return new PageImpl<HoaDon>(list, pageable, this.searchHoaDon(keyword).size());
+    }
+
+    @Override
+    public BigDecimal getTongTienByIdHoaDon(Integer idHoaDon) {
+        return hoaDonRepository.findTongTienByHoaDonId(idHoaDon);
+    }
+
+    @Override
+    public BigDecimal calculateTotalAmount() {
+        List<HoaDonChiTiet> listHDCT = hoaDonChiTietRepository.findAll(); // Hàm này trả về danh sách tất cả hóa đơn chi tiết
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (HoaDonChiTiet hdct : listHDCT) {
+            totalAmount = totalAmount.add(hdct.getThanhTien());
+        }
+        return totalAmount;
+    }
+
+    @Override
+    public void themSanPhamVaoHoaDonChiTiet(Integer idHD, Integer idCTSP, Integer soLuong) {
+        hoaDonRepository.themSanPhamVaoHoaDonChiTiet(idHD, idCTSP, soLuong);
+    }
+
+    @Override
+    public void xoaSanPhamKhoiGioHang(Integer idHDCT, Integer idCTSP) {
+        hoaDonRepository.xoaSanPhamKhoiGioHang(idHDCT, idCTSP);
+    }
+
+    @Override
+    public void capNhatSanPhamTrongGioHang(Integer idCTSP, Integer idHDCT, Integer soLuongThayDoi, Integer soLuongTrongGio) {
+        hoaDonRepository.capNhatSanPhamTrongGioHang(idCTSP, idHDCT, soLuongThayDoi, soLuongTrongGio);
+    }
+
+    @Override
+    public void thanhToanHoaDon(Integer idHD, Integer idKH, Integer idNV) {
+        hoaDonRepository.thanhToanHoaDon(idHD, idKH, idNV);
+    }
+
+    @Override
+    public boolean kiemTraSanPhamTonTaiTrongGioHang(Integer id, Integer spctId) {
+        return hoaDonChiTietRepository.existsByHoaDonIdAndSanPhamChiTietId(id, spctId);
+    }
+
+    @Override
+    public void congDonSoLuongSanPhamTrongGioHang(Integer id, Integer spctId, Integer soLuong) {
+        HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonIdAndSanPhamChiTietId(id, spctId);
+        if (hoaDonChiTiet != null) {
+            hoaDonChiTiet.setSoLuong(hoaDonChiTiet.getSoLuong() + soLuong);
+            hoaDonChiTietRepository.save(hoaDonChiTiet);
+        }
     }
 
 }

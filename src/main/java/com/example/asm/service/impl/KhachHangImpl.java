@@ -39,6 +39,22 @@ public class KhachHangImpl implements KhachHangService {
     }
 
     @Override
+    public KhachHang findKhachHangById2(Integer id) {
+        return khachHangRepository.findKhachHangByIdLike(id);
+    }
+
+    @Override
+    public KhachHang findKhachHangByTen(String ten) {
+        return (KhachHang) khachHangRepository.searchKhachHangByTen(ten);
+    }
+
+    @Override
+    public KhachHang findKhachHangBySdt(String sdt) {
+      return khachHangRepository.findKhachHangBySdtLike(sdt);
+    }
+
+
+    @Override
     public Page<KhachHang> findPageKhachHang(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo-1, pageSize);
         return khachHangRepository.findAll(pageable);

@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 import java.util.Optional;
 
-public interface SanPhamChiTietService{
+public interface SanPhamChiTietService {
     List<SanPhamChiTiet> getAllSanPhamChiTiet();
 
     void saveSanPhamChiTiet(SanPhamChiTiet sanPhamChiTiet);
@@ -22,4 +22,9 @@ public interface SanPhamChiTietService{
 
     // Hàm này dùng để kết hợp tìm kiếm và phân trang
     Page<SanPhamChiTiet> SearchandPageSanPhamChiTiet(int pageNo, int pageSize, String keyword);
+
+    int getSoLuongTrongGioHangByIdCTSP(Integer idCTSP);
+
+    int getSoLuongTonByIDCTSP(Integer idCTSP);
+     boolean checkAddGioHang(int idCtsp, int soLuongThemVaoGio);
 }

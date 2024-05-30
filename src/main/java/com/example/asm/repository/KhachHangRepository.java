@@ -14,4 +14,13 @@ import java.util.List;
 public interface KhachHangRepository extends JpaRepository<KhachHang,Integer> {
     @Query("SELECT sp FROM KhachHang sp WHERE sp.ten LIKE %?1%")
     List<KhachHang> searchKhachHangByTen(String ten);
+
+    @Query("SELECT sp FROM KhachHang sp WHERE sp.ten LIKE %?1%")
+    KhachHang findKhachHangByTenLike(String ten);
+
+    @Query("SELECT sp FROM KhachHang sp WHERE sp.sdt LIKE %?1%")
+    KhachHang findKhachHangBySdtLike(String sdt);
+
+    @Query("SELECT kh FROM KhachHang kh WHERE kh.id = ?1")
+    KhachHang findKhachHangByIdLike(Integer id);
 }

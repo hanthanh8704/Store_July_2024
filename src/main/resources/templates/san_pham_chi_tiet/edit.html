@@ -12,14 +12,14 @@
 <div class="container-fluid">
     <h2 class="text-center">Cập nhật sản phẩm chi tiết</h2>
     <main id="main" class="main">
-        <form th:object="${spct}" th:action="@{/admin/spct/update/{id}(id=${spct.getId()})}" method="post">
+        <form th:object="${sanPhamChiTiet}" th:action="@{/admin/spct/update/{id}(id=${sanPhamChiTiet.id})}" method="post">
             <!-- Input mã -->
             <div class="mt-3">
                 <label for="ma" class="form-label">Mã</label>
-                <input type="text" th:field="*{ma}" class="form-control" id="ma" placeholder="Nhập mã"/>
+                <input type="text" th:field="*{maSpct}" class="form-control" id="ma" placeholder="Nhập mã"/>
             </div>
             <!-- Hiển thị lỗi nếu có -->
-            <div th:if="${#fields.hasErrors('ma')}" style="color: red" th:errors="*{ma}"></div>
+            <div th:if="${#fields.hasErrors('maSpct')}" style="color: red" th:errors="*{maSpct}"></div>
 
             <!-- Dropdown chọn sản phẩm -->
             <div class="mt-3">
@@ -28,10 +28,9 @@
                     <option value="">Chọn một sản phẩm</option>
                     <option th:each="pr : ${product}" th:value="${pr.id}" th:text="${pr.ten}"></option>
                 </select>
-                <div th:if="${#fields.hasErrors('sanPham')}" style="color: red" th:errors="*{sanPham.ten}"></div>
+                <div th:if="${#fields.hasErrors('sanPham')}" style="color: red" th:errors="*{sanPham}"></div>
             </div>
             <!-- Hiển thị lỗi nếu có -->
-
 
             <!-- Dropdown chọn màu sắc -->
             <div class="mt-3">

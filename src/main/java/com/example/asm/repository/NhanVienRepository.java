@@ -14,4 +14,5 @@ import java.util.List;
 public interface NhanVienRepository extends JpaRepository<NhanVien,Integer> {
     @Query("SELECT sp FROM NhanVien sp WHERE sp.ten LIKE %?1%")
     List<NhanVien> searchNhanVienByTen(String ten);
+
 }

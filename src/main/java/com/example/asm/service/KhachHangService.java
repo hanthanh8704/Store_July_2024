@@ -15,6 +15,9 @@ public interface KhachHangService {
     void deleteKhachHang(Integer id);
 
     Optional<KhachHang> findKhachHangById(Integer id);
+    KhachHang findKhachHangById2(Integer id);
+    KhachHang findKhachHangByTen(String ten);
+    KhachHang findKhachHangBySdt(String sdt);
 
     Page<KhachHang> findPageKhachHang(int pageNo, int pageSize);
 

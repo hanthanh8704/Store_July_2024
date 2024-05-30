@@ -1,6 +1,8 @@
 package com.example.asm.service.impl;
 
+import com.example.asm.model.HoaDonChiTiet;
 import com.example.asm.model.SanPhamChiTiet;
+import com.example.asm.repository.HoaDonChiTietRepository;
 import com.example.asm.repository.SanPhamChiTietRepository;
 import com.example.asm.service.SanPhamChiTietService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,9 @@ import java.util.Optional;
 public class SanPhamChiTietImpl implements SanPhamChiTietService {
     @Autowired
     private SanPhamChiTietRepository sanPhamChiTietRepository;
+
+    @Autowired
+    private HoaDonChiTietRepository hoaDonChiTietRepository;
 
     @Override
     public List<SanPhamChiTiet> getAllSanPhamChiTiet() {
@@ -60,5 +65,29 @@ public class SanPhamChiTietImpl implements SanPhamChiTietService {
 
         list = list.subList(start, end);
         return new PageImpl<SanPhamChiTiet>(list, pageable, this.searchSanPhamChiTiet(keyword).size());
+    }
+
+    @Override
+    public int getSoLuongTrongGioHangByIdCTSP(Integer idCTSP) {
+        return sanPhamChiTietRepository.getSoLuongTrongGioHangByIdCTSP(idCTSP);
+    }
+
+    @Override
+    public int getSoLuongTonByIDCTSP(Integer idCTSP) {
+        return sanPhamChiTietRepository.getSoLuongTonByIDCTSP(idCTSP);
+    }
+
+    @Override
+    public boolean checkAddGioHang(int idCtsp, int soLuongThemVaoGio) {
+        int soLuongTonSP = getSoLuongTonByIDCTSP(idCtsp);
+        int soLuongTrongGio = getSoLuongTrongGioHangByIdCTSP(idCtsp);
+        int soLuongTon = soLuongTrongGio + soLuongTonSP;
+        if (soLuongThemVaoGio < 1) {
+            return false;
+        } else if (soLuongThemVaoGio > soLuongTon) {
+            return false;
+        }
+
+        return true;
     }
 }
