@@ -62,4 +62,9 @@ public class SanPhamImpl implements SanPhamService {
         list = list.subList(start, end);
         return new PageImpl<SanPham>(list, pageable, this.searchSanPham(keyword).size());
     }
+
+    @Override
+    public SanPham findByTen(String ten) {
+        return sanPhamRepository.findByTen(ten);
+    }
 }

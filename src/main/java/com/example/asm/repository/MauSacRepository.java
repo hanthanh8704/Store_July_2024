@@ -13,4 +13,6 @@ import java.util.List;
 public interface MauSacRepository extends JpaRepository<MauSac, Integer> {
     @Query("Select ms FROM MauSac ms WHERE ms.ten LIKE %?1%")
     List<MauSac> searchMauSacByTen(String ten);
+
+    MauSac findByTen(String ten);
 }

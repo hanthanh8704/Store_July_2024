@@ -41,6 +41,9 @@
                     <td th:text="${pr.trangThai}"></td>
                     <td style="width: 1px" class="text-nowrap">
                         <a type="button" class="btn btn-success" th:href="@{/admin/hdct/{id}(id=${pr.id})}">Detail</a>
+                        <form method="get" th:action="@{/admin/billPdf/{id}(id=${pr.id})}" th:if="${pr.trangThai == 1}" >
+                            <button type="submit" class="btn btn-primary mt-2 me-2">Xuất file PDF</button>
+                        </form>
                     </td>
                 </tr>
                 </tbody>

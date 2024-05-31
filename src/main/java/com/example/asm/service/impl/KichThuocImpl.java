@@ -18,6 +18,7 @@ import java.util.Optional;
 public class KichThuocImpl implements KichThuocService {
     @Autowired
     KichThuocRepository kichThuocRepository;
+
     @Override
     public List<KichThuoc> getAllKichThuoc() {
         return kichThuocRepository.findAll();
@@ -40,7 +41,7 @@ public class KichThuocImpl implements KichThuocService {
 
     @Override
     public Page<KichThuoc> pageKichThuoc(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo-1,pageSize);
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
         return kichThuocRepository.findAll(pageable);
     }
 
@@ -60,5 +61,10 @@ public class KichThuocImpl implements KichThuocService {
 
         list = list.subList(start, end);
         return new PageImpl<KichThuoc>(list, pageable, this.searchKichThuoc(keyword).size());
+    }
+
+    @Override
+    public KichThuoc findByTen(String ten) {
+        return kichThuocRepository.findByTen(ten);
     }
 }

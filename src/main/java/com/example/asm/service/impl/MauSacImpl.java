@@ -62,4 +62,9 @@ public class MauSacImpl implements MauSacService {
         list = list.subList(start, end);
         return new PageImpl<MauSac>(list, pageable, searchMauSac(keyword).size());
     }
+
+    @Override
+    public MauSac findByTen(String ten) {
+        return mauSacRepository.findByTen(ten);
+    }
 }

@@ -7,20 +7,26 @@ import com.example.asm.model.KhachHang;
 import com.example.asm.model.SanPhamChiTiet;
 import com.example.asm.service.*;
 import com.example.asm.util.LoginSession;
+import com.example.asm.util.PDFGenerator;
 import com.example.asm.util.Timestamp;
-import jakarta.servlet.http.HttpServletRequest;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
@@ -32,13 +38,15 @@ public class BanHangController {
     private final SanPhamChiTietService sanPhamChiTietService;
     private final NhanVienService nhanVienService;
     private final KhachHangService khachHangService;
+    private final PDFGenerator pdfGenerator;
 
-    public BanHangController(HoaDonService hoaDonService, HoaDonChiTietService hoaDonChiTietService, SanPhamChiTietService sanPhamChiTietService, NhanVienService nhanVienService, KhachHangService khachHangService) {
+    public BanHangController(HoaDonService hoaDonService, HoaDonChiTietService hoaDonChiTietService, SanPhamChiTietService sanPhamChiTietService, NhanVienService nhanVienService, KhachHangService khachHangService, PDFGenerator pdfGenerator) {
         this.hoaDonService = hoaDonService;
         this.hoaDonChiTietService = hoaDonChiTietService;
         this.sanPhamChiTietService = sanPhamChiTietService;
         this.nhanVienService = nhanVienService;
         this.khachHangService = khachHangService;
+        this.pdfGenerator = pdfGenerator;
     }
 
     // Kiểm tra đăng nhập
@@ -212,7 +220,6 @@ public class BanHangController {
     }
 
 
-
     // Hàm này dùng để checkAdd giỏ hàng
 //    @PostMapping("/add")
 //    public String themSanPhamVaoGioHang(@RequestParam("spctId") Integer spctId,
@@ -238,7 +245,6 @@ public class BanHangController {
 //        }
 //        return "redirect:/admin/orders";
 //    }
-
 
 
     // Hàm này dùng để xóa sản phẩm trong giỏ hàng
@@ -303,5 +309,119 @@ public class BanHangController {
         hoaDonService.thanhToanHoaDon(idHD, idKH, idNV);
         return "redirect:/admin/orders";
     }
+
+    // Hàm này dùng để gen file pdf
+    @GetMapping("/billPdf/{id}")
+    public void exportToPDF(@PathVariable("id") Integer id, HttpServletResponse response) throws IOException {
+        HoaDon bill = hoaDonService.findById(id);
+
+        if (bill == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid bill status for PDF generation.");
+            return;
+        }
+
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=bill_" + id + ".pdf");
+
+        Document document = new Document();
+        try {
+            PdfWriter.getInstance(document, response.getOutputStream());
+            document.open();
+
+            // Tạo tiêu đề
+            Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 32, Font.BOLD, BaseColor.BLACK);
+            Paragraph title = new Paragraph("The HabitShop", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+            document.add(new Paragraph("\n"));
+
+            // Thông tin hóa đơn
+            Font infoFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL, BaseColor.DARK_GRAY);
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            String nowS = formatter.format(new Date());
+
+            document.add(new Paragraph("Ma hoa đon: " + bill.getId(), infoFont));
+            document.add(new Paragraph("Ten khach hang: " + bill.getKhachHang().getTen(), infoFont));
+            document.add(new Paragraph("Ngay tao hoa đon: " + bill.getNgayMuaHang(), infoFont));
+            document.add(new Paragraph("Ngay xuat hoa đon: " + nowS, infoFont));
+            document.add(new Paragraph("Ma nguoi tao hoa đon: " + bill.getNhanVien().getMaNV(), infoFont));
+            document.add(new Paragraph("Ten nguoi xuat hoa đon: " + bill.getNhanVien().getTen(), infoFont));
+            document.add(new Paragraph("Tong tien của hoa đon: " + bill.getTongTien(), infoFont));
+            document.add(new Paragraph("\n"));
+            document.add(new Paragraph("Danh sach san pham đa mua"));
+            document.add(new Paragraph("\n"));
+
+            // Tạo bảng sản phẩm
+            PdfPTable table = new PdfPTable(8);
+            table.setWidthPercentage(100);
+            table.setSpacingBefore(10f);
+            table.setSpacingAfter(10f);
+
+            // Tiêu đề bảng
+            Font headerFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD, BaseColor.DARK_GRAY);
+            addTableHeader(table, headerFont);
+
+            // Dữ liệu bảng
+            Font dataFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL, BaseColor.DARK_GRAY);
+            List<HoaDonChiTiet> listHDCT = hoaDonService.getHDCTByHDID(id);
+            addTableData(table, listHDCT, dataFont);
+
+            // Thêm bảng vào document
+            document.add(table);
+
+            // Thêm tổng tiền vào cuối bảng
+            PdfPCell totalCell = new PdfPCell(new Phrase("Thành tiền: " + bill.getTongTien(), headerFont));
+            totalCell.setColspan(8);
+            totalCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            table.addCell(totalCell);
+
+            // Thêm footer
+            document.add(new Paragraph("\n"));
+            document.add(new Paragraph("\n"));
+            Font footerFont = new Font(Font.FontFamily.TIMES_ROMAN, 20, Font.BOLD, BaseColor.BLACK);
+            Paragraph footer = new Paragraph("CHUC QUY KHACH MUA SAM VUI VE!!!!", footerFont);
+            document.add(footer);
+            document.add(new Paragraph("\n"));
+
+            // Tạo footer bằng bảng
+            PdfPTable footerTable = new PdfPTable(1);
+            footerTable.setWidthPercentage(100);
+            footerTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+            PdfPCell footerCell = new PdfPCell(new Phrase("----------------------------- CAM ON QUY KHACH ---------------------------", footerFont));
+            footerTable.addCell(footerCell);
+            document.add(footerTable);
+
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } finally {
+            document.close();
+        }
+    }
+
+    private boolean isValidBillStatus(String trangThai) {
+        return !trangThai.equalsIgnoreCase("Đã huỷ") && !trangThai.equalsIgnoreCase("Chờ thanh toán");
+    }
+
+    private void addTableHeader(PdfPTable table, Font headerFont) {
+        String[] headers = {"Tên sản phẩm", "Size", "Màu sắc", "Đơn giá", "Số lượng", "Thành tiền"};
+        for (String header : headers) {
+            PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            table.addCell(cell);
+        }
+    }
+
+    private void addTableData(PdfPTable table, List<HoaDonChiTiet> listHDCT, Font dataFont) {
+        for (HoaDonChiTiet detail : listHDCT) {
+            table.addCell(new PdfPCell(new Phrase(detail.getSanPhamChiTiet().getSanPham().getTen(), dataFont)));
+            table.addCell(new PdfPCell(new Phrase(String.valueOf(detail.getSanPhamChiTiet().getKichThuoc()), dataFont)));
+            table.addCell(new PdfPCell(new Phrase(String.valueOf(detail.getSanPhamChiTiet().getMauSac()), dataFont)));
+            table.addCell(new PdfPCell(new Phrase(String.valueOf(detail.getDonGia()), dataFont)));
+            table.addCell(new PdfPCell(new Phrase(String.valueOf(detail.getSoLuong()), dataFont)));
+            BigDecimal thanhTien = detail.getDonGia().multiply(BigDecimal.valueOf(detail.getSoLuong()));
+            table.addCell(new PdfPCell(new Phrase(String.valueOf(thanhTien), dataFont)));
+        }
+    }
+
 
 }

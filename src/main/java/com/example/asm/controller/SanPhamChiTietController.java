@@ -7,6 +7,7 @@ import com.example.asm.service.KichThuocService;
 import com.example.asm.service.MauSacService;
 import com.example.asm.service.SanPhamChiTietService;
 import com.example.asm.service.SanPhamService;
+import com.example.asm.util.ExcelConfig;
 import com.example.asm.util.LoginSession;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -166,34 +167,32 @@ public class SanPhamChiTietController {
         }
     }
 
-//    @Autowired
-//    private ExcelConfig excelConfig;
-//
-//    @GetMapping("spct/exportExcel")
-//    public void generateExportExcel(HttpServletResponse response) throws Exception {
-//
-//        response.setContentType("application/octet-stream");
-//
-//        String headerKey = "Content-Disposition";
-//        String headerValue = "attachment ; filename=productdetail.xls";
-//
-//        response.setHeader(headerKey, headerValue);
-//
-//        excelConfig.exportExcelCTSP(response);
-//
-//        response.flushBuffer();
-//    }
-//
-//    @PostMapping("spct/importExcel")
-//    public String importExcel(@RequestParam("file") MultipartFile file, Model model) throws IOException {
-//        boolean importResult = excelConfig.importExcelSPCT(file);
-//        if (importResult) {
-//            model.addAttribute("spct", importResult);
-//            System.out.println("Import successful");
-//            return "redirect:/admin/spct";
-//        } else {
-//            System.out.println("Import failed");
-//        }
-//        return getIndex(1, 3, "", model);
-//    }
+    @Autowired
+    private ExcelConfig excelConfig;
+
+    @GetMapping("spct/exportExcel")
+    public void generateExportExcel(HttpServletResponse response) throws Exception {
+
+        response.setContentType("application/octet-stream");
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment ; filename=productdetail.xls";
+
+        response.setHeader(headerKey, headerValue);
+
+        excelConfig.exportExcelCTSP(response);
+
+        response.flushBuffer();
+    }
+
+    @PostMapping("spct/importExcel")
+    public String importExcel(@RequestParam("file") MultipartFile file, Model model) throws IOException {
+        boolean importResult = excelConfig.importExcelSPCT(file);
+        if (importResult) {
+            model.addAttribute("spct", importResult);
+            System.out.println("Import successful");
+            return "redirect:/admin/spct";
+        }
+        return null;
+    }
 }

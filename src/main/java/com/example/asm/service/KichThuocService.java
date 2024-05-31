@@ -10,10 +10,17 @@ public interface KichThuocService {
     List<KichThuoc> getAllKichThuoc();
 
     void saveKichThuoc(KichThuoc kichThuoc);
+
     void deleteKichThuoc(Integer id);
+
     Optional<KichThuoc> findKichThuoc(Integer id);
+
     Page<KichThuoc> pageKichThuoc(int pageNo, int pageSize);
+
     List<KichThuoc> searchKichThuoc(String keyword);
+
     Page<KichThuoc> SearchandPageKichThuoc(int pageNo, int pageSize, String keyword);
+
+    KichThuoc findByTen(String ten);
 
 }

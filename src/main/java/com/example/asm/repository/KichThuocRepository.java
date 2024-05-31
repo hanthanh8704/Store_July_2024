@@ -13,4 +13,6 @@ import java.util.List;
 public interface KichThuocRepository extends JpaRepository<KichThuoc,Integer> {
     @Query("select sp from KichThuoc sp where sp.ten LIKE %?1%")
     List<KichThuoc> searchKichThuocByTen(String ten);
+
+    KichThuoc findByTen(String ten);
 }

@@ -21,4 +21,6 @@ public interface SanPhamService {
 
     // Hàm này dùng để kết hợp tìm kiếm và phân trang
     Page<SanPham> SearchandPageSanPham(int pageNo, int pageSize, String keyword);
+
+    SanPham findByTen(String ten);
 }

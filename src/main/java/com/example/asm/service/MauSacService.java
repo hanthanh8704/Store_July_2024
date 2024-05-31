@@ -18,4 +18,6 @@ public interface MauSacService {
 
     // Hàm này dùng để kết hợp tìm kiếm và phân trang
     Page<MauSac> SearchandPageMauSac(int pageNo, int pageSize, String keyword);
+
+    MauSac findByTen(String ten);
 }

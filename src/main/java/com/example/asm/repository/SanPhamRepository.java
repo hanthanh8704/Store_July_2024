@@ -13,4 +13,6 @@ import java.util.List;
 public interface SanPhamRepository extends JpaRepository<SanPham, Integer> {
     @Query("SELECT sp FROM SanPham sp WHERE sp.ten LIKE %?1%")
     List<SanPham> searchSanPhamByTen(String ten);
+
+    SanPham findByTen(String ten);
 }

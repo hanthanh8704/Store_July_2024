@@ -41,4 +41,5 @@ public class HoaDonChiTiet {
     public BigDecimal getThanhTien() {
         return donGia.multiply(new BigDecimal(soLuong));
     }
+
 }
