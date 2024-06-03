@@ -86,12 +86,12 @@
                                             </div>
                                             <div class="modal-body">
                                                 <!-- Form nhập số lượng -->
-                                                <form method="post" th:action="@{/admin/updateSPCT/{id}(id=${pr.id})}">
+                                                <form method="post" th:action="@{/admin/updateSPCT/{id}(id=${pr.sanPhamChiTiet.id})}">
                                                     <input type="hidden" name="idHoaDon"
                                                            th:value="${pr.hoaDon.id}">
                                                     <input type="hidden" name="idCTSP"
                                                            th:value="${pr.sanPhamChiTiet.id}">
-                                                    <input type="hidden" name="idHDCT" th:value="${pr.id}">
+                                                    <input type="hidden" name="id" th:value="${pr.id}">
                                                     <input type="hidden" name="soLuongTrongGio"
                                                            th:value="${pr.soLuong}">
                                                     <div class="form-group">
@@ -117,6 +117,9 @@
                         </tr>
                         </tbody>
                     </table>
+                    <div class="mt-3" th:if="${error2}">
+                        <span class="text-danger" th:text="${error}"></span>
+                    </div>
                 </div>
                 <div class="col-md-4">
                     <h3>Thông tin đơn hàng</h3>
@@ -157,6 +160,9 @@
                                 <label class="form-label">Tổng Tiền</label>
                                 <input type="text" name="tongTien" id="tongTien" class="form-control"
                                        th:value="${tongTien}" readonly/>
+                            </div>
+                            <div class="mt-3" th:if="${error}">
+                                <span class="text-danger" th:text="${error}"></span>
                             </div>
                             <div class="mt-3 mb-3 me-3">
                                 <button class="btn btn-primary" type="submit">Tạo Hóa Đơn</button>

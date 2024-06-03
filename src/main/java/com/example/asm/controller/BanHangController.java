@@ -184,7 +184,7 @@ public class BanHangController {
     @PostMapping("/add")
     public String themSanPhamVaoGioHang(@RequestParam("spctId") Integer spctId,
                                         @RequestParam("id") Integer id,
-                                        @RequestParam("soLuong") Integer soLuong, Model model) {
+                                        @RequestParam("soLuong") Integer soLuong, Model model, RedirectAttributes redirectAttributes) {
         System.out.println("IDSPCT : " + spctId);
         System.out.println("ID : " + id);
         System.out.println("Số Lượng : " + soLuong);
@@ -195,7 +195,7 @@ public class BanHangController {
         int soLuongTon = soLuongTrongGio + soLuongSPCT;
 
         // Kiểm tra nếu số lượng nhỏ hơn 1 hoặc lớn hơn tồn kho trong giỏ hàng
-        if (soLuong < 1) {
+        if (soLuong < 0) {
             model.addAttribute("error", "Số lượng phải lớn hơn 0");
         } else if (soLuong > soLuongTon) {
             model.addAttribute("error", "Số lượng tồn không đủ");
@@ -216,35 +216,10 @@ public class BanHangController {
         }
 
         // Sau khi xử lý, chuyển hướng về trang đơn hàng
-        return "redirect:/admin/orders";
+        return saveForm(id);
     }
 
 
-    // Hàm này dùng để checkAdd giỏ hàng
-//    @PostMapping("/add")
-//    public String themSanPhamVaoGioHang(@RequestParam("spctId") Integer spctId,
-//                                        @RequestParam("id") Integer id,
-//                                        @RequestParam("soLuong") Integer soLuong, Model model) {
-//        System.out.println("IDSPCT : " + spctId);
-//        System.out.println("ID : " + id);
-//        System.out.println("Số Lượng : " + soLuong);
-//        Integer soLuongSPCT = sanPhamChiTietService.getSoLuongTonByIDCTSP(spctId);
-//        Integer soLuongTrongGio = sanPhamChiTietService.getSoLuongTrongGioHangByIdCTSP(spctId);
-//        try {
-//            int soLuongTon = soLuongTrongGio + soLuongSPCT;
-//            if (soLuong < 1) {
-//                model.addAttribute("error", "Số lượng phải lớn hơn 0");
-//            } else if (soLuong > soLuongTon) {
-//                model.addAttribute("error", "Số lượng tồn không đủ");
-//            } else {
-//                hoaDonService.themSanPhamVaoHoaDonChiTiet(id, spctId, soLuong);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            model.addAttribute("error", "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng");
-//        }
-//        return "redirect:/admin/orders";
-//    }
 
 
     // Hàm này dùng để xóa sản phẩm trong giỏ hàng
@@ -265,50 +240,141 @@ public class BanHangController {
 
             hoaDonService.xoaSanPhamKhoiGioHang(spctId, idHDCT);
         }
-        return "redirect:/admin/orders";
+        return saveForm(idHoaDon);
     }
 
     // Hàm này dùng để update sản phẩm trong giỏ hàng
-    @PostMapping("/updateSPCT/{id}")
+//    @PostMapping("/updateSPCT/{idCTSP}")
+//    public String updateSanPhamTrongGioHang(
+//            @RequestParam("id") Integer idHDCT,
+//            @PathVariable("idCTSP") Integer spctID,
+//            @RequestParam("idHoaDon") Integer idHD,
+//            @RequestParam("soLuongTrongGio") Integer soLuongTrongGioHang,
+//            @RequestParam("soLuongThayDoi") Integer soLuongThayDoi,
+//            Model model
+//    ) {
+//        if (idHD == null) {
+//            model.addAttribute("error", "Bạn chưa lựa chọn hóa đơn id");
+//        } else {
+//            System.out.println("ID Chi tiết sản phẩm: " + spctID);
+//            System.out.println("ID hóa đơn: " + idHD);
+//            System.out.println("ID hóa đơn chi tiết: " + idHDCT);
+//            System.out.println("Số lượng sản phẩm trong giỏ: " + soLuongTrongGioHang);
+//            System.out.println("Số lượng sản phẩm thay đổi: " + soLuongThayDoi);
+//
+//            hoaDonService.capNhatSanPhamTrongGioHang(spctID, idHDCT, soLuongThayDoi, soLuongTrongGioHang);
+//        }
+//        return saveForm(idHD);
+//    }
+
+    // Hàm này dùng để update sản phẩm trong giỏ hàng
+    @PostMapping("/updateSPCT/{idCTSP}")
     public String updateSanPhamTrongGioHang(
-            @PathVariable("id") Integer idHDCT,
-            @RequestParam("idCTSP") Integer spctID,
+            @RequestParam("id") Integer idHDCT,
+            @PathVariable("idCTSP") Integer spctID,
             @RequestParam("idHoaDon") Integer idHD,
             @RequestParam("soLuongTrongGio") Integer soLuongTrongGioHang,
-            @RequestParam("soLuongThayDoi") Integer soLuongThayDoi,
-            Model model
+            @RequestParam("soLuongThayDoi") String soLuongThayDoiStr,
+            Model model,
+            RedirectAttributes redirectAttributes
     ) {
         if (idHD == null) {
-            model.addAttribute("error", "Bạn chưa lựa chọn hóa đơn id");
+            redirectAttributes.addFlashAttribute("error2", "Bạn chưa lựa chọn hóa đơn id");
+            return "redirect:/admin/orders";
         } else {
-            System.out.println("ID Chi tiết sản phẩm: " + spctID);
-            System.out.println("ID hóa đơn: " + idHD);
-            System.out.println("ID hóa đơn chi tiết: " + idHDCT);
-            System.out.println("Số lượng sản phẩm trong giỏ: " + soLuongTrongGioHang);
-            System.out.println("Số lượng sản phẩm thay đổi: " + soLuongThayDoi);
+            Integer soLuongThayDoi = null;
+            try {
+                soLuongThayDoi = Integer.parseInt(soLuongThayDoiStr);
 
-            hoaDonService.capNhatSanPhamTrongGioHang(spctID, idHDCT, soLuongThayDoi, soLuongTrongGioHang);
+                if (soLuongThayDoi < 0) {
+                    redirectAttributes.addFlashAttribute("error2", "Số lượng thay đổi phải là số và không được âm");
+                    saveForm(idHD);
+                }
+
+                if (soLuongThayDoi == 0) {
+                    redirectAttributes.addFlashAttribute("error2", "Số lượng thay đổi không thể bằng 0");
+                    saveForm(idHD);
+                }
+
+                // Kiểm tra số lượng tồn trong bảng SanPhamChiTiet
+                Integer soLuongTonSPCT = sanPhamChiTietService.getSoLuongTonByIDCTSP(spctID);
+                if (soLuongTonSPCT == null) {
+                    redirectAttributes.addFlashAttribute("error2", "Không tìm thấy sản phẩm chi tiết với ID: " + spctID);
+                    saveForm(idHD);
+                }
+
+                // Kiểm tra nếu số lượng thay đổi lớn hơn số lượng tồn
+                if (soLuongThayDoi > soLuongTonSPCT) {
+                    redirectAttributes.addFlashAttribute("error2", "Số lượng thay đổi lớn hơn số lượng tồn");
+                    saveForm(idHD);
+                }
+
+                System.out.println("ID Chi tiết sản phẩm: " + spctID);
+                System.out.println("ID hóa đơn: " + idHD);
+                System.out.println("ID hóa đơn chi tiết: " + idHDCT);
+                System.out.println("Số lượng sản phẩm trong giỏ: " + soLuongTrongGioHang);
+                System.out.println("Số lượng sản phẩm thay đổi: " + soLuongThayDoi);
+
+                hoaDonService.capNhatSanPhamTrongGioHang(spctID, idHDCT, soLuongThayDoi, soLuongTrongGioHang);
+            } catch (NumberFormatException e) {
+                redirectAttributes.addFlashAttribute("error2", "Số lượng thay đổi phải là số hợp lệ");
+                return "redirect:/admin/orders";
+            }
         }
         return "redirect:/admin/orders";
     }
 
+
+    // Hàm này dùng để thanh toán hóa đơn
+//    @GetMapping("/thanhToanHD")
+//    public String thanhToan(
+//            @RequestParam(value = "idKH", required = false) Integer idKH,
+//            @RequestParam(value = "idNV", required = false) Integer idNV,
+//            @RequestParam(value = "idHoaDon", required = false) Integer idHD,
+//            Model model
+//    ) {
+//        if (idHD == null || idKH == null || idNV == null) {
+//            model.addAttribute("error", "Vui lòng lựa chọn hoá đơn để bán hàng");
+//        }
+//
+//        System.out.println("ID khách hàng: " + idKH);
+//        System.out.println("ID nhân viên: " + idNV);
+//        System.out.println("ID hóa đơn: " + idHD);
+//        hoaDonService.thanhToanHoaDon(idHD, idKH, idNV);
+//        return "redirect:/admin/orders";
+//    }
+
+    // Hàm này dùng để thanh toán hóa đơn
     // Hàm này dùng để thanh toán hóa đơn
     @GetMapping("/thanhToanHD")
     public String thanhToan(
             @RequestParam(value = "idKH", required = false) Integer idKH,
             @RequestParam(value = "idNV", required = false) Integer idNV,
             @RequestParam(value = "idHoaDon", required = false) Integer idHD,
-            Model model
+            Model model,
+            RedirectAttributes redirectAttributes
     ) {
         if (idHD == null || idKH == null || idNV == null) {
-            model.addAttribute("error", "Vui lòng lựa chọn hoá đơn để bán hàng");
+            redirectAttributes.addFlashAttribute("error", "Vui lòng lựa chọn hoá đơn để bán hàng");
+            return "redirect:/admin/orders";
         }
+
+        // Lấy tổng tiền của hóa đơn
+        BigDecimal tongTien = hoaDonService.getTongTienByIdHoaDon(idHD);
+
+        // Kiểm tra nếu tổng tiền bằng null hoặc bằng 0
+        if (tongTien == null || tongTien.compareTo(BigDecimal.ZERO) == 0) {
+            redirectAttributes.addFlashAttribute("error", "Tổng tiền của hoá đơn phải lớn hơn 0 để thanh toán");
+            return "redirect:/admin/orders";
+        }
+
         System.out.println("ID khách hàng: " + idKH);
         System.out.println("ID nhân viên: " + idNV);
         System.out.println("ID hóa đơn: " + idHD);
         hoaDonService.thanhToanHoaDon(idHD, idKH, idNV);
         return "redirect:/admin/orders";
     }
+
 
     // Hàm này dùng để gen file pdf
     @GetMapping("/billPdf/{id}")
@@ -423,5 +489,9 @@ public class BanHangController {
         }
     }
 
+    // Hàm chuyển hướng tương tự saveForm trong Spring Boot
+    private String saveForm(Integer idHoaDon) {
+        return "redirect:/admin/detail-order/" + idHoaDon;
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.example.asm.service;
 
+import com.example.asm.model.HoaDon;
 import com.example.asm.model.SanPham;
 import com.example.asm.model.SanPhamChiTiet;
 import org.springframework.data.domain.Page;
@@ -27,4 +28,5 @@ public interface SanPhamChiTietService {
 
     int getSoLuongTonByIDCTSP(Integer idCTSP);
      boolean checkAddGioHang(int idCtsp, int soLuongThemVaoGio);
+    SanPhamChiTiet findSPCTById(Integer id);
 }

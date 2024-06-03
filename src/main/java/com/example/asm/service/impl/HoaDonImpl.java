@@ -2,9 +2,10 @@ package com.example.asm.service.impl;
 
 import com.example.asm.model.HoaDon;
 import com.example.asm.model.HoaDonChiTiet;
-import com.example.asm.model.KhachHang;
+import com.example.asm.model.SanPhamChiTiet;
 import com.example.asm.repository.HoaDonChiTietRepository;
 import com.example.asm.repository.HoaDonRepository;
+import com.example.asm.repository.SanPhamChiTietRepository;
 import com.example.asm.service.HoaDonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,10 @@ public class HoaDonImpl implements HoaDonService {
     private HoaDonRepository hoaDonRepository;
     @Autowired
     private HoaDonChiTietRepository hoaDonChiTietRepository;
+
+    public HoaDonImpl(SanPhamChiTietRepository sanPhamChiTietRepository) {
+        this.sanPhamChiTietRepository = sanPhamChiTietRepository;
+    }
 
     @Override
     public List<HoaDon> fillAllHoaDon() {
@@ -112,14 +117,15 @@ public class HoaDonImpl implements HoaDonService {
     public boolean kiemTraSanPhamTonTaiTrongGioHang(Integer id, Integer spctId) {
         return hoaDonChiTietRepository.existsByHoaDonIdAndSanPhamChiTietId(id, spctId);
     }
-
+    private final SanPhamChiTietRepository sanPhamChiTietRepository;
     @Override
     public void congDonSoLuongSanPhamTrongGioHang(Integer id, Integer spctId, Integer soLuong) {
         HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonIdAndSanPhamChiTietId(id, spctId);
         if (hoaDonChiTiet != null) {
+            // Nếu sản phẩm đã tồn tại trong giỏ hàng, cộng dồn số lượng
             hoaDonChiTiet.setSoLuong(hoaDonChiTiet.getSoLuong() + soLuong);
-            hoaDonChiTietRepository.save(hoaDonChiTiet);
         }
+        hoaDonChiTietRepository.save(hoaDonChiTiet);
     }
 
 }

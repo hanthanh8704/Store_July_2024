@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 @EnableJpaRepositories
 public interface HoaDonChiTietRepository extends JpaRepository<HoaDonChiTiet,Integer> {
+    // Hàm này dùng để kiểm tra xem sản phẩm chi tiết đã tồn tại trong hóa đơn chi tiết chưa
     boolean existsByHoaDonIdAndSanPhamChiTietId(Integer hoaDonId, Integer sanPhamChiTietId);
+    // Hàm này dùng để cộng dồn sản phẩm chi tiết nếu có id trùng với id sản phẩm sẽ được rh
     HoaDonChiTiet findByHoaDonIdAndSanPhamChiTietId(Integer hoaDonId, Integer sanPhamChiTietId);
 }

@@ -1,5 +1,6 @@
 package com.example.asm.repository;
 
+import com.example.asm.model.HoaDon;
 import com.example.asm.model.SanPham;
 import com.example.asm.model.SanPhamChiTiet;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,5 +22,6 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
 
     @Query("SELECT SUM(hd.soLuong) FROM HoaDonChiTiet hd WHERE hd.sanPhamChiTiet.id = :idCTSP")
     Integer getSoLuongTrongGioHangByIdCTSP(@Param("idCTSP") Integer idCTSP);
-
+    @Query("SELECT h FROM SanPhamChiTiet h WHERE h.id = :id")
+    SanPhamChiTiet findSPCTById(Integer id);
 }

@@ -1,5 +1,6 @@
 package com.example.asm.service.impl;
 
+import com.example.asm.model.HoaDon;
 import com.example.asm.model.HoaDonChiTiet;
 import com.example.asm.model.SanPhamChiTiet;
 import com.example.asm.repository.HoaDonChiTietRepository;
@@ -89,5 +90,10 @@ public class SanPhamChiTietImpl implements SanPhamChiTietService {
         }
 
         return true;
+    }
+
+    @Override
+    public SanPhamChiTiet findSPCTById(Integer id) {
+        return sanPhamChiTietRepository.findSPCTById(id);
     }
 }
