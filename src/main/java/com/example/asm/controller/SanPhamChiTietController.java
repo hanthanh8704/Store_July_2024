@@ -76,6 +76,7 @@ public class SanPhamChiTietController {
         }
     }
 
+
     // View add
     @GetMapping("spct/create")
     public String create(Model model) {

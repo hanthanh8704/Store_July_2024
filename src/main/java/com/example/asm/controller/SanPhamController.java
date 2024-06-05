@@ -11,8 +11,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -56,11 +59,20 @@ public class SanPhamController {
     // Add
     @PostMapping("product/store")
     public String store(
-            SanPham sanPham,
+            @Valid SanPham sanPham,
+            BindingResult result,
             Model model) {
         if (!isLoggedIn()) {
             return "redirect:/admin/logon";
         } else {
+            if (result.hasErrors()) {
+                Map<String, String> fields = new HashMap<>();
+                for (FieldError error : result.getFieldErrors()) {
+                    fields.put(error.getField(), error.getDefaultMessage());
+                }
+                model.addAttribute("fields", fields);
+                return "redirect:/admin/product";
+            }
             sanPhamService.saveSanPham(sanPham);
             return "redirect:/admin/product";
         }

@@ -15,17 +15,13 @@
         <form th:action="@{/admin/size/store}" action="#" method="post">
             <div>
                 <label th:text="Mã" for="ma" class="form-label"></label>
-                <input type="text" name="ma" class="form-control" id="ma"  placeholder="Nhập mã"/>
-            </div>
-            <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
-                <p th:text="${error}"></p>
+                <input type="text" name="ma" class="form-control" id="ma" placeholder="Nhập mã"/>
+                <span class="text-danger" th:if="${error}" th:text="${error}"></span>
             </div>
             <div>
                 <label class="form-label" th:text="Tên" for="ten"></label>
                 <input type="text" name="ten" id="ten" class="form-control" placeholder="Nhập tên"/>
-            </div>
-            <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
-                <p th:text="${error}"></p>
+                <span class="text-danger" th:if="${error1}" th:text="${error1}"></span>
             </div>
             <div>
                 <label class="form-label" th:text="${trangThai}" for="trangThai"></label>
@@ -34,9 +30,7 @@
                     <option value="0">Active</option>
                     <option value="1">Inactive</option>
                 </select>
-            </div>
-            <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
-                <p th:text="${error}"></p>
+                <span class="text-danger" th:if="${error2}" th:text="${error2}"></span>
             </div>
             <button class="btn btn-success" type="submit">Save</button>
         </form>

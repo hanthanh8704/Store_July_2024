@@ -19,11 +19,11 @@ public class MauSac {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotNull(message = "Mã không được bỏ trống")
+    @NotBlank(message = "Mã không được bỏ trống")
     @Column(name = "ma")
     private String ma;
 
-    @NotNull(message = "Tên không được bỏ trống")
+    @NotBlank(message = "Tên không được bỏ trống")
     @Column(name = "ten")
     private String ten;
 

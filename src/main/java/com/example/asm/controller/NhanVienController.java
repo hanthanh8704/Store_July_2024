@@ -73,19 +73,26 @@ public class NhanVienController {
     // Add
     @PostMapping("employee/store")
     public String store(
-            @Valid NhanVien nhanVien,
-            BindingResult result,
+            NhanVien nhanVien,
             Model model) {
         if (!isLoggedIn()) {
             return "redirect:/admin/logon";
         } else {
-            if (result.hasErrors()) {
-                Map<String, String> fields = new HashMap<>();
-                for (FieldError error : result.getFieldErrors()) {
-                    fields.put(error.getField(), error.getDefaultMessage());
-                }
-                model.addAttribute("error", "Vui lòng không bỏ trống");
-                model.addAttribute("employee", nhanVien);
+            // Kiểm tra xem các ô input nếu bỏ trống
+            if (nhanVien.getMaNV() == null || nhanVien.getMaNV().isEmpty()) {
+                model.addAttribute("error", "Vui lòng nhập mã"); // Thêm thông báo lỗi vào model
+                return "nhan_vien/create";
+            } else if (nhanVien.getTen() == null || nhanVien.getTen().isEmpty()) {
+                model.addAttribute("error1", "Vui lòng nhập tên"); // Thêm thông báo lỗi vào model
+                return "nhan_vien/create";
+            } else if (nhanVien.getUsername() == null || nhanVien.getUsername().isEmpty()) {
+                model.addAttribute("error2", "Vui lòng nhập username"); // Thêm thông báo lỗi vào model
+                return "nhan_vien/create";
+            } else if (nhanVien.getPassword() == null || nhanVien.getPassword().isEmpty()) {
+                model.addAttribute("error3", "Vui lòng nhập password"); // Thêm thông báo lỗi vào model
+                return "nhan_vien/create";
+            } else if (nhanVien.getTrangThai() == null) {
+                model.addAttribute("error4", "Vui lòng lựa chọn trạng thái"); // Thêm thông báo lỗi vào model
                 return "nhan_vien/create";
             } else {
                 nhanVienService.saveNhanVien(nhanVien);

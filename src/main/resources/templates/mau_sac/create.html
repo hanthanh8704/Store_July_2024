@@ -15,13 +15,15 @@
         <form th:object="${color}" th:action="@{/admin/color/store}" method="post">
             <div>
                 <label for="ma" class="form-label">Mã</label>
-                <input type="text" name="ma" class="form-control" id="ma"  placeholder="Nhập mã"/>
-                <div th:if="${#fields.hasErrors('ma')}" class="alert alert-danger mt-3" role="alert" th:errors="*{ma}"></div>
+                <input type="text" name="ma" class="form-control" id="ma" placeholder="Nhập mã"/>
+                <!-- Hiển thị thông báo lỗi -->
+                <span class="text-danger" th:if="${error}" th:text="${error}"></span>
             </div>
             <div>
                 <label for="ten" class="form-label">Tên</label>
                 <input type="text" name="ten" id="ten" class="form-control" placeholder="Nhập tên"/>
-                <div th:if="${#fields.hasErrors('ten')}" class="alert alert-danger mt-3" role="alert" th:errors="*{ten}"></div>
+                <!-- Hiển thị thông báo lỗi -->
+                <span class="text-danger" th:if="${error1}" th:text="${error1}"></span>
             </div>
             <div>
                 <label for="trangThai" class="form-label">Trạng thái</label>
@@ -30,7 +32,7 @@
                     <option value="0">Active</option>
                     <option value="1">Inactive</option>
                 </select>
-                <div th:if="${#fields.hasErrors('trangThai')}" class="alert alert-danger mt-3" role="alert" th:errors="*{trangThai}"></div>
+                <span class="text-danger" th:if="${error2}" th:text="${error2}"></span>
             </div>
             <button class="btn btn-success mt-3" type="submit">Save</button>
         </form>

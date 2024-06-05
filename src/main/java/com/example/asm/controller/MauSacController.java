@@ -71,19 +71,20 @@ public class MauSacController {
     // Add
     @PostMapping("color/store")
     public String store(
-            @Valid MauSac mauSac,
-            BindingResult result,
+            MauSac mauSac,
             Model model) {
         if (!isLoggedIn()) {
             return "redirect:/admin/logon";
         } else {
-            if (result.hasErrors()) {
-                Map<String, String> fields = new HashMap<>();
-                for (FieldError error : result.getFieldErrors()) {
-                    fields.put(error.getField(), error.getDefaultMessage());
-                }
-                model.addAttribute("fields", fields);
-                model.addAttribute("color", mauSac);
+            // Kiểm tra xem các ô input nếu bỏ trống
+            if (mauSac.getMa() == null || mauSac.getMa().isEmpty()) {
+                model.addAttribute("error", "Vui lòng nhập mã màu"); // Thêm thông báo lỗi vào model
+                return "mau_sac/create";
+            } else if (mauSac.getTen() == null || mauSac.getTen().isEmpty()) {
+                model.addAttribute("error1", "Vui lòng nhập tên màu sắc"); // Thêm thông báo lỗi vào model
+                return "mau_sac/create";
+            }else if (mauSac.getTrangThai() == null) {
+                model.addAttribute("error2", "Vui lòng lựa chọn trạng thái"); // Thêm thông báo lỗi vào model
                 return "mau_sac/create";
             } else {
                 mauSacService.saveMauSac(mauSac);
@@ -92,6 +93,8 @@ public class MauSacController {
         }
     }
 
+
+
     // View update
     @GetMapping("color/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
@@ -99,7 +102,7 @@ public class MauSacController {
             return "redirect:/admin/logon";
         } else {
             Optional<MauSac> opt = mauSacService.findMauSacById(id);
-            opt.ifPresent(mauSac -> model.addAttribute("color",mauSac));
+            opt.ifPresent(mauSac -> model.addAttribute("color", mauSac));
             return "mau_sac/edit";
         }
     }
@@ -112,7 +115,7 @@ public class MauSacController {
                          Model model) {
         if (!isLoggedIn()) {
             return "redirect:/admin/logon";
-        }else {
+        } else {
             mauSacService.saveMauSac(mauSac);
             return "redirect:/admin/color";
         }

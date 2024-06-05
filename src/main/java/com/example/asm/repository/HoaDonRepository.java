@@ -22,14 +22,18 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Integer> {
     @Query("SELECT sp FROM HoaDon sp WHERE sp.nhanVien.ten LIKE %?1%")
     List<HoaDon> searchHoaDonByTen(String ten);
 
-    @Query("SELECT h FROM HoaDonChiTiet h WHERE h.hoaDon.id = :hoaDonId")
-    List<HoaDonChiTiet> getHDCTByHDID(@Param("hoaDonId") Integer hoaDonId);
+//    @Query("SELECT h FROM HoaDonChiTiet h WHERE h.hoaDon.id = :hoaDonId")
+//    List<HoaDonChiTiet> getHDCTByHDID(@Param("hoaDonId") Integer hoaDonId);
 
     @Query("SELECT h FROM HoaDonChiTiet h")
     Page<HoaDonChiTiet> findAllPaging(Pageable pageable);
 
     @Query("SELECT h FROM HoaDon h WHERE h.id = :id")
     HoaDon findHoaDonById(Integer id);
+
+    // Hàm này dùng để lấy ra danh sách hóa đơn chi tiết từ id hóa đơn
+    @Query("SELECT h FROM HoaDonChiTiet h WHERE h.hoaDon.id = :hoaDonId")
+    List<HoaDonChiTiet> getHDCTByHoaDonId(@Param("hoaDonId") Integer hoaDonId);
 
     // Phương thức tính thành tiền ở hdct
     @Query("SELECT SUM(hdct.donGia * hdct.soLuong) FROM HoaDonChiTiet hdct WHERE hdct.hoaDon.id = :idHoaDon")

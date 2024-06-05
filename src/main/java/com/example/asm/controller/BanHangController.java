@@ -9,11 +9,6 @@ import com.example.asm.service.*;
 import com.example.asm.util.LoginSession;
 import com.example.asm.util.PDFGenerator;
 import com.example.asm.util.Timestamp;
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -220,8 +215,6 @@ public class BanHangController {
     }
 
 
-
-
     // Hàm này dùng để xóa sản phẩm trong giỏ hàng
     @GetMapping("/deleteSPCT/{id}")
     public String xoaSanPhamTrongGioHang(
@@ -274,7 +267,7 @@ public class BanHangController {
             @PathVariable("idCTSP") Integer spctID,
             @RequestParam("idHoaDon") Integer idHD,
             @RequestParam("soLuongTrongGio") Integer soLuongTrongGioHang,
-            @RequestParam("soLuongThayDoi") String soLuongThayDoiStr,
+            @RequestParam("soLuongThayDoi") Integer soLuongThayDoi,
             Model model,
             RedirectAttributes redirectAttributes
     ) {
@@ -282,50 +275,41 @@ public class BanHangController {
             redirectAttributes.addFlashAttribute("error2", "Bạn chưa lựa chọn hóa đơn id");
             return "redirect:/admin/orders";
         } else {
-            Integer soLuongThayDoi = null;
-            try {
-                soLuongThayDoi = Integer.parseInt(soLuongThayDoiStr);
-
-                if (soLuongThayDoi < 0) {
-                    redirectAttributes.addFlashAttribute("error2", "Số lượng thay đổi phải là số và không được âm");
-                    saveForm(idHD);
-                }
-
-                if (soLuongThayDoi == 0) {
-                    redirectAttributes.addFlashAttribute("error2", "Số lượng thay đổi không thể bằng 0");
-                    saveForm(idHD);
-                }
-
-                // Kiểm tra số lượng tồn trong bảng SanPhamChiTiet
-                Integer soLuongTonSPCT = sanPhamChiTietService.getSoLuongTonByIDCTSP(spctID);
-                if (soLuongTonSPCT == null) {
-                    redirectAttributes.addFlashAttribute("error2", "Không tìm thấy sản phẩm chi tiết với ID: " + spctID);
-                    saveForm(idHD);
-                }
-
-                // Kiểm tra nếu số lượng thay đổi lớn hơn số lượng tồn
-                if (soLuongThayDoi > soLuongTonSPCT) {
-                    redirectAttributes.addFlashAttribute("error2", "Số lượng thay đổi lớn hơn số lượng tồn");
-                    saveForm(idHD);
-                }
-
-                System.out.println("ID Chi tiết sản phẩm: " + spctID);
-                System.out.println("ID hóa đơn: " + idHD);
-                System.out.println("ID hóa đơn chi tiết: " + idHDCT);
-                System.out.println("Số lượng sản phẩm trong giỏ: " + soLuongTrongGioHang);
-                System.out.println("Số lượng sản phẩm thay đổi: " + soLuongThayDoi);
-
-                hoaDonService.capNhatSanPhamTrongGioHang(spctID, idHDCT, soLuongThayDoi, soLuongTrongGioHang);
-            } catch (NumberFormatException e) {
-                redirectAttributes.addFlashAttribute("error2", "Số lượng thay đổi phải là số hợp lệ");
+            if (soLuongThayDoi == 0) {
+                redirectAttributes.addFlashAttribute("error2", "Số lượng thay đổi không thể bằng 0");
+                saveForm(idHD);
                 return "redirect:/admin/orders";
             }
+
+            // Kiểm tra số lượng tồn trong bảng SanPhamChiTiet
+            Integer soLuongTonSPCT = sanPhamChiTietService.getSoLuongTonByIDCTSP(spctID);
+            if (soLuongTonSPCT == null) {
+                redirectAttributes.addFlashAttribute("error2", "Không tìm thấy sản phẩm chi tiết với ID: " + spctID);
+                saveForm(idHD);
+                return "redirect:/admin/orders";
+            }
+
+            // Kiểm tra nếu số lượng thay đổi lớn hơn số lượng tồn
+            if (soLuongThayDoi > soLuongTonSPCT) {
+                redirectAttributes.addFlashAttribute("error2", "Số lượng thay đổi lớn hơn số lượng tồn");
+                saveForm(idHD);
+                return "redirect:/admin/orders";
+            }
+
+            System.out.println("ID Chi tiết sản phẩm: " + spctID);
+            System.out.println("ID hóa đơn: " + idHD);
+            System.out.println("ID hóa đơn chi tiết: " + idHDCT);
+            System.out.println("Số lượng sản phẩm trong giỏ: " + soLuongTrongGioHang);
+            System.out.println("Số lượng sản phẩm thay đổi: " + soLuongThayDoi);
+
+            hoaDonService.capNhatSanPhamTrongGioHang(spctID, idHDCT, soLuongThayDoi, soLuongTrongGioHang);
+
+            return "redirect:/admin/orders";
         }
-        return "redirect:/admin/orders";
     }
 
 
-    // Hàm này dùng để thanh toán hóa đơn
+// Hàm này dùng để thanh toán hóa đơn
 //    @GetMapping("/thanhToanHD")
 //    public String thanhToan(
 //            @RequestParam(value = "idKH", required = false) Integer idKH,
@@ -345,7 +329,7 @@ public class BanHangController {
 //    }
 
     // Hàm này dùng để thanh toán hóa đơn
-    // Hàm này dùng để thanh toán hóa đơn
+// Hàm này dùng để thanh toán hóa đơn
     @GetMapping("/thanhToanHD")
     public String thanhToan(
             @RequestParam(value = "idKH", required = false) Integer idKH,
@@ -373,120 +357,6 @@ public class BanHangController {
         System.out.println("ID hóa đơn: " + idHD);
         hoaDonService.thanhToanHoaDon(idHD, idKH, idNV);
         return "redirect:/admin/orders";
-    }
-
-
-    // Hàm này dùng để gen file pdf
-    @GetMapping("/billPdf/{id}")
-    public void exportToPDF(@PathVariable("id") Integer id, HttpServletResponse response) throws IOException {
-        HoaDon bill = hoaDonService.findById(id);
-
-        if (bill == null) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid bill status for PDF generation.");
-            return;
-        }
-
-        response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition", "attachment; filename=bill_" + id + ".pdf");
-
-        Document document = new Document();
-        try {
-            PdfWriter.getInstance(document, response.getOutputStream());
-            document.open();
-
-            // Tạo tiêu đề
-            Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 32, Font.BOLD, BaseColor.BLACK);
-            Paragraph title = new Paragraph("The HabitShop", titleFont);
-            title.setAlignment(Element.ALIGN_CENTER);
-            document.add(title);
-            document.add(new Paragraph("\n"));
-
-            // Thông tin hóa đơn
-            Font infoFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL, BaseColor.DARK_GRAY);
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-            String nowS = formatter.format(new Date());
-
-            document.add(new Paragraph("Ma hoa đon: " + bill.getId(), infoFont));
-            document.add(new Paragraph("Ten khach hang: " + bill.getKhachHang().getTen(), infoFont));
-            document.add(new Paragraph("Ngay tao hoa đon: " + bill.getNgayMuaHang(), infoFont));
-            document.add(new Paragraph("Ngay xuat hoa đon: " + nowS, infoFont));
-            document.add(new Paragraph("Ma nguoi tao hoa đon: " + bill.getNhanVien().getMaNV(), infoFont));
-            document.add(new Paragraph("Ten nguoi xuat hoa đon: " + bill.getNhanVien().getTen(), infoFont));
-            document.add(new Paragraph("Tong tien của hoa đon: " + bill.getTongTien(), infoFont));
-            document.add(new Paragraph("\n"));
-            document.add(new Paragraph("Danh sach san pham đa mua"));
-            document.add(new Paragraph("\n"));
-
-            // Tạo bảng sản phẩm
-            PdfPTable table = new PdfPTable(8);
-            table.setWidthPercentage(100);
-            table.setSpacingBefore(10f);
-            table.setSpacingAfter(10f);
-
-            // Tiêu đề bảng
-            Font headerFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD, BaseColor.DARK_GRAY);
-            addTableHeader(table, headerFont);
-
-            // Dữ liệu bảng
-            Font dataFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL, BaseColor.DARK_GRAY);
-            List<HoaDonChiTiet> listHDCT = hoaDonService.getHDCTByHDID(id);
-            addTableData(table, listHDCT, dataFont);
-
-            // Thêm bảng vào document
-            document.add(table);
-
-            // Thêm tổng tiền vào cuối bảng
-            PdfPCell totalCell = new PdfPCell(new Phrase("Thành tiền: " + bill.getTongTien(), headerFont));
-            totalCell.setColspan(8);
-            totalCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            table.addCell(totalCell);
-
-            // Thêm footer
-            document.add(new Paragraph("\n"));
-            document.add(new Paragraph("\n"));
-            Font footerFont = new Font(Font.FontFamily.TIMES_ROMAN, 20, Font.BOLD, BaseColor.BLACK);
-            Paragraph footer = new Paragraph("CHUC QUY KHACH MUA SAM VUI VE!!!!", footerFont);
-            document.add(footer);
-            document.add(new Paragraph("\n"));
-
-            // Tạo footer bằng bảng
-            PdfPTable footerTable = new PdfPTable(1);
-            footerTable.setWidthPercentage(100);
-            footerTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-            PdfPCell footerCell = new PdfPCell(new Phrase("----------------------------- CAM ON QUY KHACH ---------------------------", footerFont));
-            footerTable.addCell(footerCell);
-            document.add(footerTable);
-
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } finally {
-            document.close();
-        }
-    }
-
-    private boolean isValidBillStatus(String trangThai) {
-        return !trangThai.equalsIgnoreCase("Đã huỷ") && !trangThai.equalsIgnoreCase("Chờ thanh toán");
-    }
-
-    private void addTableHeader(PdfPTable table, Font headerFont) {
-        String[] headers = {"Tên sản phẩm", "Size", "Màu sắc", "Đơn giá", "Số lượng", "Thành tiền"};
-        for (String header : headers) {
-            PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
-            table.addCell(cell);
-        }
-    }
-
-    private void addTableData(PdfPTable table, List<HoaDonChiTiet> listHDCT, Font dataFont) {
-        for (HoaDonChiTiet detail : listHDCT) {
-            table.addCell(new PdfPCell(new Phrase(detail.getSanPhamChiTiet().getSanPham().getTen(), dataFont)));
-            table.addCell(new PdfPCell(new Phrase(String.valueOf(detail.getSanPhamChiTiet().getKichThuoc()), dataFont)));
-            table.addCell(new PdfPCell(new Phrase(String.valueOf(detail.getSanPhamChiTiet().getMauSac()), dataFont)));
-            table.addCell(new PdfPCell(new Phrase(String.valueOf(detail.getDonGia()), dataFont)));
-            table.addCell(new PdfPCell(new Phrase(String.valueOf(detail.getSoLuong()), dataFont)));
-            BigDecimal thanhTien = detail.getDonGia().multiply(BigDecimal.valueOf(detail.getSoLuong()));
-            table.addCell(new PdfPCell(new Phrase(String.valueOf(thanhTien), dataFont)));
-        }
     }
 
     // Hàm chuyển hướng tương tự saveForm trong Spring Boot

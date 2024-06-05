@@ -95,30 +95,58 @@ public class ExcelConfig {
                 String sanPhamTen = row.getCell(2).getStringCellValue();
                 SanPham sanPham = sanPhamService.findByTen(sanPhamTen);
                 if (sanPham == null) {
-                    throw new RuntimeException("Không tìm thấy sản phẩm: " + sanPhamTen);
+                    System.out.println("Không tìm thấy sản phẩm: " + sanPhamTen);
+                    return false;
                 }
                 sanPhamChiTiet.setSanPham(sanPham);
 
                 String kichThuocTen = row.getCell(3).getStringCellValue();
                 KichThuoc kichThuoc = kichThuocService.findByTen(kichThuocTen);
                 if (kichThuoc == null) {
-                    throw new RuntimeException("Không tìm thấy kích thước: " + kichThuocTen);
+                    System.out.println("Không tìm thấy kích thước: " + kichThuocTen);
+                    return false;
                 }
                 sanPhamChiTiet.setKichThuoc(kichThuoc);
 
                 String mauSacTen = row.getCell(4).getStringCellValue();
                 MauSac mauSac = mauSacService.findByTen(mauSacTen);
                 if (mauSac == null) {
-                    throw new RuntimeException("Không tìm thấy màu sắc: " + mauSacTen);
+                    System.out.println("Không tìm thấy màu sắc: " + mauSacTen);
+                    return false;
                 }
                 sanPhamChiTiet.setMauSac(mauSac);
 
-                sanPhamChiTiet.setSoLuong((int) row.getCell(5).getNumericCellValue());
-                sanPhamChiTiet.setDonGia(BigDecimal.valueOf(row.getCell(6).getNumericCellValue()));
-                sanPhamChiTiet.setTrangThai((int) row.getCell(7).getNumericCellValue());
+                int soLuong = (int) row.getCell(5).getNumericCellValue();
+                if (soLuong <= 0) {
+                    System.out.println("Số lượng phải lớn hơn 0");
+                    return false;
+                }
+                sanPhamChiTiet.setSoLuong(soLuong);
 
-                // Lưu sản phẩm chi tiết vào cơ sở dữ liệu
-                sanPhamChiTietService.saveSanPhamChiTiet(sanPhamChiTiet);
+                double donGiaValue = row.getCell(6).getNumericCellValue();
+                if (donGiaValue <= 0) {
+                    System.out.println("Đơn giá phải lớn hơn 0");
+                    return false;
+                }
+                sanPhamChiTiet.setDonGia(BigDecimal.valueOf(donGiaValue));
+
+                int trangThai = (int) row.getCell(7).getNumericCellValue();
+                // Kiểm tra trạng thái nếu không hợp lệ thì trả về false
+                if (trangThai != 0 && trangThai != 1) {
+                    System.out.println("Trạng thái không hợp lệ");
+                    return false;
+                }
+                sanPhamChiTiet.setTrangThai(trangThai);
+
+                // Kiểm tra xem sản phẩm chi tiết đã tồn tại trong cơ sở dữ liệu chưa
+                SanPhamChiTiet existingSPCT = sanPhamChiTietService.findSPCTById(sanPhamChiTiet.getId());
+                if (existingSPCT != null) {
+                    // Nếu tồn tại, thực hiện cập nhật
+                    sanPhamChiTietService.saveSanPhamChiTiet(sanPhamChiTiet);
+                } else {
+                    // Nếu không tồn tại, thực hiện thêm mới
+                    sanPhamChiTietService.saveSanPhamChiTiet(sanPhamChiTiet);
+                }
             }
             return true; // Return true if import is successful
         } catch (Exception e) {
@@ -126,5 +154,7 @@ public class ExcelConfig {
             return false; // Return false if import fails
         }
     }
+
+
 
 }

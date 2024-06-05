@@ -24,22 +24,22 @@
                 <label class="form-label" th:text="Tên" for="ten"></label>
                 <input type="text" name="ten" id="ten" class="form-control" placeholder="Nhập tên"/>
             </div>
-            <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
-                <p th:text="${error}"></p>
+            <div th:if="${error1}" class="alert alert-danger mt-3" role="alert">
+                <p th:text="${error1}"></p>
             </div>
             <div>
                 <label class="form-label" th:text="Username" for="ten"></label>
                 <input type="text" name="username" id="username" class="form-control" placeholder="Nhập username"/>
             </div>
-            <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
-                <p th:text="${error}"></p>
+            <div th:if="${error2}" class="alert alert-danger mt-3" role="alert">
+                <p th:text="${error2}"></p>
             </div>
             <div>
                 <label class="form-label" th:text="Password" for="ten"></label>
                 <input type="text" name="password" id="password" class="form-control" placeholder="Nhập password"/>
             </div>
-            <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
-                <p th:text="${error}"></p>
+            <div th:if="${error3}" class="alert alert-danger mt-3" role="alert">
+                <p th:text="${error3}"></p>
             </div>
             <div>
                 <label class="form-label" th:text="${trangThai}" for="trangThai"></label>
@@ -49,8 +49,8 @@
                     <option value="1">Inactive</option>
                 </select>
             </div>
-            <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
-                <p th:text="${error}"></p>
+            <div th:if="${error4}" class="alert alert-danger mt-3" role="alert">
+                <p th:text="${error4}"></p>
             </div>
             <button class="btn btn-success" type="submit">Save</button>
         </form>

@@ -25,6 +25,9 @@ public class HoaDonImpl implements HoaDonService {
     @Autowired
     private HoaDonChiTietRepository hoaDonChiTietRepository;
 
+    @Autowired
+    private SanPhamChiTietRepository sanPhamChiTietRepository;
+
     public HoaDonImpl(SanPhamChiTietRepository sanPhamChiTietRepository) {
         this.sanPhamChiTietRepository = sanPhamChiTietRepository;
     }
@@ -62,7 +65,7 @@ public class HoaDonImpl implements HoaDonService {
 
     @Override
     public List<HoaDonChiTiet> getHDCTByHDID(Integer hoaDonId) {
-        return hoaDonRepository.getHDCTByHDID(hoaDonId);
+        return hoaDonRepository.getHDCTByHoaDonId(hoaDonId);
     }
 
     @Override
@@ -117,7 +120,7 @@ public class HoaDonImpl implements HoaDonService {
     public boolean kiemTraSanPhamTonTaiTrongGioHang(Integer id, Integer spctId) {
         return hoaDonChiTietRepository.existsByHoaDonIdAndSanPhamChiTietId(id, spctId);
     }
-    private final SanPhamChiTietRepository sanPhamChiTietRepository;
+
     @Override
     public void congDonSoLuongSanPhamTrongGioHang(Integer id, Integer spctId, Integer soLuong) {
         HoaDonChiTiet hoaDonChiTiet = hoaDonChiTietRepository.findByHoaDonIdAndSanPhamChiTietId(id, spctId);

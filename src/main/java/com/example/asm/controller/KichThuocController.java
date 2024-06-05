@@ -70,8 +70,20 @@ public class KichThuocController {
         if (!isLoggedIn()) {
             return "redirect:/admin/logon";
         } else {
-            kichThuocService.saveKichThuoc(kichThuoc);
-            return "redirect:/admin/size";
+            // Kiểm tra xem các ô input nếu bỏ trống
+            if (kichThuoc.getMa() == null || kichThuoc.getMa().isEmpty()) {
+                model.addAttribute("error", "Vui lòng nhập mã"); // Thêm thông báo lỗi vào model
+                return "kich_thuoc/create";
+            } else if (kichThuoc.getTen() == null || kichThuoc.getTen().isEmpty()) {
+                model.addAttribute("error1", "Vui lòng nhập tên"); // Thêm thông báo lỗi vào model
+                return "kich_thuoc/create";
+            }else if (kichThuoc.getTrangThai() == null) {
+                model.addAttribute("error2", "Vui lòng lựa chọn trạng thái"); // Thêm thông báo lỗi vào model
+                return "kich_thuoc/create";
+            } else {
+                kichThuocService.saveKichThuoc(kichThuoc);
+                return "redirect:/admin/size";
+            }
         }
     }
 
