@@ -36,6 +36,8 @@
                 <tr>
                     <th data-sortable="true">ID</th>
                     <th data-sortable="true">Mã</th>
+                    <th data-sortable="true">Ảnh</th>
+                    <th data-sortable="true">Tên Danh Mục</th>
                     <th data-sortable="true">Tên Sản Phẩm</th>
                     <th data-sortable="true">Tên kích thước</th>
                     <th data-sortable="true">Tên màu sắc</th>
@@ -49,6 +51,12 @@
                 <tr>
                     <td th:text="${pr.id}"></td>
                     <td th:text="${pr.maSpct}"></td>
+                    <td>
+                        <img th:src="@{'/uploads/'+${pr.image}}" class="img-circle"
+                             alt="Image Erorr"
+                             width="100px">
+                    </td>
+                    <td th:text="${pr.category.getTen()}"></td>
                     <td th:text="${pr.sanPham.getTen()}"></td>
                     <td th:text="${pr.kichThuoc.getTen()}"></td>
                     <td th:text="${pr.mauSac.getTen()}"></td>

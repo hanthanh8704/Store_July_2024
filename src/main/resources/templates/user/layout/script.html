@@ -1,0 +1,41 @@
+<div th:fragment="script">
+  <script th:src="@{/user/js/jquery.min.js}"></script>
+  <script th:src="@{/user/js/bootstrap.min.js}"></script>
+  <script th:src="@{/user/js/slick.min.js}"></script>
+  <script th:src="@{/user/js/nouislider.min.js}"></script>
+  <script th:src="@{/user/js/jquery.zoom.min.js}"></script>
+  <script th:src="@{/user/js/main.js}"></script>
+  <script>
+    // Lắng nghe sự kiện khi giá trị của các trường input thay đổi
+    document.getElementById("price-min").addEventListener("change", sendDataToServer);
+    document.getElementById("price-max").addEventListener("change", sendDataToServer);
+
+    function sendDataToServer() {
+      // Lấy giá trị của các trường input
+      var minPrice = document.getElementById("price-min").value;
+      var maxPrice = document.getElementById("price-max").value;
+
+      // Tạo một đối tượng chứa các giá trị để gửi đến server
+      var data = {
+        minPrice: minPrice,
+        maxPrice: maxPrice
+      };
+
+      // Gửi request HTTP POST đến endpoint của controller
+      fetch('/all', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+              .then(response => response.text())
+              .then(data => {
+                console.log('Success:', data);
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+              });
+    }
+  </script>
+</div>

@@ -12,7 +12,7 @@
 <div class="container-fluid">
     <h2 class="text-center">Cập nhật sản phẩm chi tiết</h2>
     <main id="main" class="main">
-        <form th:object="${sanPhamChiTiet}" th:action="@{/admin/spct/update/{id}(id=${sanPhamChiTiet.id})}" method="post">
+        <form th:object="${sanPhamChiTiet}" th:action="@{/admin/spct/update/{id}(id=${sanPhamChiTiet.id})}" method="post" enctype="multipart/form-data">
             <!-- Input mã -->
             <div class="mt-3">
                 <label for="ma" class="form-label">Mã</label>
@@ -21,6 +21,12 @@
             <!-- Hiển thị lỗi nếu có -->
             <div th:if="${#fields.hasErrors('maSpct')}" style="color: red" th:errors="*{maSpct}"></div>
 
+            <div class="mt-3">
+                <label class="form-label" for="image">Image</label>
+                <input type="file" name="file" class="form-control" id="image">
+                <div th:if="${#fields.hasErrors('image')}" class="alert alert-danger mt-3" role="alert"
+                     th:errors="*{image}"></div>
+            </div>
             <!-- Dropdown chọn sản phẩm -->
             <div class="mt-3">
                 <label class="form-label">Tên sản phẩm</label>

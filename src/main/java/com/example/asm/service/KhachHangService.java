@@ -25,4 +25,7 @@ public interface KhachHangService {
 
     // Hàm này dùng để kết hợp tìm kiếm và phân trang
     Page<KhachHang> SearchandPageKhachHang(int pageNo, int pageSize, String keyword);
+
+    KhachHang findKhachHangByUsernameAndPassword(String username, String password);
+
 }

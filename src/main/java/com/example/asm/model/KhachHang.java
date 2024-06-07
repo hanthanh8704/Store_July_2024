@@ -31,6 +31,12 @@ public class KhachHang {
     @Column(name = "ten")
     private String ten;
 
+    @Column(name = "username")
+    private String username;
+
+    @Column(name = "password")
+    private String password;
+
     @NotBlank(message = "Số điện thoại không được bỏ trống")
     @Column(name = "sdt")
     private String sdt;

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/user/layout/head :: head"></head>
+<body>
+<!-- HEADER -->
+<header th:replace="/user/layout/header :: header"></header>
+<!-- /HEADER -->
+
+<!-- NAVIGATION -->
+<nav id="navigation" th:replace="/user/layout/menu :: menu">
+</nav>
+<!-- /NAVIGATION -->
+
+<!-- BREADCRUMB -->
+<div id="breadcrumb" class="section" th:replace="/user/layout/bread ::bread">
+</div>
+<!-- /BREADCRUMB -->
+
+
+<!-- SECTION -->
+<div class="section">
+    <!-- container -->
+    <div class="container">
+        <!-- row -->
+        <div class="row">
+            <!-- Fillter -->
+            <div id="aside" class="col-md-3">
+                <!-- Lọc Theo Màu Sắc -->
+                <div class="aside">
+                    <h3 class="aside-title">Color</h3>
+                    <div class="checkbox-filter">
+                        <div class="row">
+                            <div th:each="color,iterStat : ${listColor}"
+                                 th:if="${iterStat.index} &lt; 6" class="col-md-5"
+                                 style="margin-left: 5px; margin-top: 5px;">
+                                <a th:href="@{/color(id=${color.id})}" class="btn btn-info" th:text="${color.ten}"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Lọc theo khoảng giá -->
+                <div class="aside">
+                    <h3 class="aside-title">Price</h3>
+                    <div class="price-filter">
+                        <div id="price-slider"></div>
+                        <div class="input-number price-min">
+                            <input id="price-min" type="number" th:value="${minPrice}" th:placeholder="'Min Price'">
+                            <span class="qty-up">+</span>
+                            <span class="qty-down">-</span>
+                        </div>
+                        <span>-</span>
+                        <div class="input-number price-max">
+                            <input id="price-max" type="number" th:value="${maxPrice}" th:placeholder="'Max Price'">
+                            <span class="qty-up">+</span>
+                            <span class="qty-down">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lọc Theo Kích Cỡ -->
+                <div class="aside">
+                    <h3 class="aside-title">Size</h3>
+                    <div class="checkbox-filter">
+                        <div class="input-checkbox">
+                            <div class="row">
+                                <div th:each="size,iterStat : ${listSize}"
+                                     th:if="${iterStat.index} &lt; 6" class="col-md-5"
+                                     style="margin-left: 5px; margin-top: 5px;">
+                                    <a th:href="@{/size(id=${size.id})}" type="button" class="btn btn-info"
+                                       th:text="${size.ten}"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Product -->
+            <div id="store" class="col-md-9">
+                <!-- store products -->
+                <div class="row">
+                    <div class="hihi">
+                        <div th:each="product : ${listProductDetail}" class="product col-xs-6 col-sm-4">
+                            <div class="product-img overflow-hidden">
+                                <img th:src="@{'/uploads/'+${product.image}}" style="height: 400px;" alt=""
+                                     width="150px">
+                            </div>
+                            <div class="product-body">
+                                <p class="product-category" th:text="${product.category.ten}"></p>
+                                <h3 class="product-name"><a th:href="@{/product(id=${product.id})}" th:text="${product.sanPham.ten}"></a></h3>
+                                <h4 class="product-price" th:text="${product.donGia}"></h4>
+                                <div class="product-rating">
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-o"></i>
+                                </div>
+                                <div class="product-btns">
+                                    <button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span
+                                            class="tooltipp">add to wishlist</span></button>
+                                    <button class="add-to-compare"><i class="fa fa-exchange"></i><span
+                                            class="tooltipp">add to compare</span></button>
+                                    <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="add-to-cart">
+                                <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phân trang -->
+                <div class="store-filter clearfix">
+                    <span class="store-qty">Showing 20-100 products</span>
+                    <ul class="store-pagination">
+                        <li class="active">1</li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li><a href="#">4</a></li>
+                        <li><a href="#"><i class="fa fa-angle-right"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- NEWSLETTER -->
+<div th:replace="/user/layout/contact :: contact">
+
+</div>
+<!-- /NEWSLETTER -->
+
+<!-- FOOTER -->
+<footer id="footer" th:replace="/user/layout/footer :: footer">
+</footer>
+<!-- /FOOTER -->
+
+<!-- jQuery Plugins -->
+<div th:replace="/user/layout/script :: script"></div>
+
+</body>
+</html>

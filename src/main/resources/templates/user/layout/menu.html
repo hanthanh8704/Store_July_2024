@@ -1,0 +1,12 @@
+<nav id="navigation" th:fragment="menu">
+  <div class="container">
+    <div id="responsive-nav">
+      <ul class="main-nav nav navbar-nav">
+        <li><a th:href="@{/all}" style="margin-left: 50px">Tất cả</a></li>
+        <li th:each="cate, iterStat : ${listCate}" th:if="${iterStat.index} &lt; 6">
+          <a th:href="@{/cate(id=${cate.id})}" style="margin-left: 50px" th:text="${cate.ten}"></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

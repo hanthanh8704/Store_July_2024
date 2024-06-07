@@ -1,7 +1,5 @@
 package com.example.asm.service;
 
-import com.example.asm.model.HoaDon;
-import com.example.asm.model.SanPham;
 import com.example.asm.model.SanPhamChiTiet;
 import org.springframework.data.domain.Page;
 
@@ -11,7 +9,7 @@ import java.util.Optional;
 public interface SanPhamChiTietService {
     List<SanPhamChiTiet> getAllSanPhamChiTiet();
 
-    void saveSanPhamChiTiet(SanPhamChiTiet sanPhamChiTiet);
+    boolean saveSanPhamChiTiet(SanPhamChiTiet sanPhamChiTiet);
 
     void deleteSanPhamChiTiet(Integer id);
 

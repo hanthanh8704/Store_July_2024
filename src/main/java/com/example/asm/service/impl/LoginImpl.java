@@ -1,5 +1,6 @@
 package com.example.asm.service.impl;
 
+import com.example.asm.model.KhachHang;
 import com.example.asm.model.NhanVien;
 import com.example.asm.repository.LoginRepository;
 import com.example.asm.repository.NhanVienRepository;
@@ -14,5 +15,10 @@ public class LoginImpl implements LoginService {
     @Override
     public NhanVien findByUsernameAndPassword(String username, String password) {
         return loginRepository.findByUsernameAndPassword(username, password);
+    }
+
+    @Override
+    public KhachHang findKhachHangByUsernameAndPassword(String username, String password) {
+        return loginRepository.findKhachHangByUsernameAndPassword(username, password);
     }
 }

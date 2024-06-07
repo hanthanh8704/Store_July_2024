@@ -28,6 +28,20 @@
                 <p th:text="${error}"></p>
             </div>
             <div>
+                <label class="form-label" th:text="username" for="ten"></label>
+                <input type="text" name="username" id="username" class="form-control" placeholder="Nhập tên"/>
+            </div>
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <p th:text="${error}"></p>
+            </div>
+            <div>
+                <label class="form-label" th:text="password" for="ten"></label>
+                <input type="text" name="password" id="password" class="form-control" placeholder="Nhập tên"/>
+            </div>
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <p th:text="${error}"></p>
+            </div>
+            <div>
                 <label class="form-label" th:text="SĐT" for="ten"></label>
                 <input type="text" name="sdt" id="sdt" class="form-control" placeholder="Nhập sđt"/>
             </div>

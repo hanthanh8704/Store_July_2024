@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -24,4 +25,22 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
     Integer getSoLuongTrongGioHangByIdCTSP(@Param("idCTSP") Integer idCTSP);
     @Query("SELECT h FROM SanPhamChiTiet h WHERE h.id = :id")
     SanPhamChiTiet findSPCTById(Integer id);
+
+
+    @Query("SELECT c FROM SanPhamChiTiet c WHERE c.sanPham.ten LIKE %?1%")
+    List<SanPhamChiTiet> searchProductDetailbyKeyWord(String keyword);
+
+    @Query("SELECT pdt FROM SanPhamChiTiet  pdt where pdt.category.id = ?1")
+    List<SanPhamChiTiet> getProductdetailByCate(Integer id);
+
+    @Query("SELECT pdt FROM SanPhamChiTiet  pdt where pdt.sanPham.id = ?1")
+    List<SanPhamChiTiet> getProductdetailBySanPham(Integer id);
+    @Query("SELECT pdt FROM SanPhamChiTiet pdt WHERE pdt.mauSac.id = ?1")
+    List<SanPhamChiTiet> findProductdetailByColor(Integer id);
+
+    @Query("SELECT pdt FROM SanPhamChiTiet pdt WHERE pdt.mauSac.id = ?1")
+    List<SanPhamChiTiet> findProductdetailBySize(Integer id);
+
+    List<SanPhamChiTiet> findByDonGiaBetween(BigDecimal mindonGia, BigDecimal maxdonGia);
+
 }

@@ -26,6 +26,14 @@
                 <input type="text" th:field="*{sdt}" class="form-control" id="sdt" placeholder="Nhập sdt"/>
             </div>
             <div>
+                <label class="form-label" th:text="username" for="ten"></label>
+                <input type="text" th:field="*{username}" class="form-control" id="username" placeholder="Nhập password"/>
+            </div>
+            <div>
+                <label class="form-label" th:text="password" for="ten"></label>
+                <input type="text" th:field="*{password}" class="form-control" id="password" placeholder="Nhập password"/>
+            </div>
+            <div>
                 <label class="form-label" th:text="${trangThai}" for="trangThai"></label>
                 <select class="form-select" th:field="*{trangThai}" id="trangThai">
                     <option value="">Lựa chọn</option>

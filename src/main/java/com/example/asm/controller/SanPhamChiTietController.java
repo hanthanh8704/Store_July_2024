@@ -1,12 +1,8 @@
 package com.example.asm.controller;
 
 
-import com.example.asm.model.SanPham;
 import com.example.asm.model.SanPhamChiTiet;
-import com.example.asm.service.KichThuocService;
-import com.example.asm.service.MauSacService;
-import com.example.asm.service.SanPhamChiTietService;
-import com.example.asm.service.SanPhamService;
+import com.example.asm.service.*;
 import com.example.asm.util.ExcelConfig;
 import com.example.asm.util.LoginSession;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,14 +13,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -42,12 +34,16 @@ public class SanPhamChiTietController {
     private final SanPhamService sanPhamService;
     private final KichThuocService kichThuocService;
     private final MauSacService mauSacService;
+    private final StorageService storageService;
+    private final CategoryService categoryService;
 
-    public SanPhamChiTietController(SanPhamChiTietService sanPhamChiTietService, SanPhamService sanPhamService, KichThuocService kichThuocService, MauSacService mauSacService) {
+    public SanPhamChiTietController(SanPhamChiTietService sanPhamChiTietService, SanPhamService sanPhamService, KichThuocService kichThuocService, MauSacService mauSacService, StorageService storageService, CategoryService categoryService) {
         this.sanPhamChiTietService = sanPhamChiTietService;
         this.sanPhamService = sanPhamService;
         this.kichThuocService = kichThuocService;
         this.mauSacService = mauSacService;
+        this.storageService = storageService;
+        this.categoryService = categoryService;
     }
 
     //Get all
@@ -87,16 +83,16 @@ public class SanPhamChiTietController {
             model.addAttribute("product", sanPhamService.getAllSanPham());
             model.addAttribute("color", mauSacService.getAllMauSac());
             model.addAttribute("size", kichThuocService.getAllKichThuoc());
+            model.addAttribute("category", categoryService.getAllSanPham());
             return "san_pham_chi_tiet/create";
         }
     }
 
     // Add
     @PostMapping("spct/store")
-    public String store(@ModelAttribute("productDetails")
-                        @Valid SanPhamChiTiet spct,
+    public String store(@ModelAttribute("productDetails") @Valid SanPhamChiTiet spct,
                         BindingResult result,
-                        Model model) {
+                        Model model, @RequestParam("file") MultipartFile file) {
         if (!isLoggedIn()) {
             return "redirect:/admin/logon";
         } else {
@@ -105,19 +101,26 @@ public class SanPhamChiTietController {
                 model.addAttribute("product", sanPhamService.getAllSanPham());
                 model.addAttribute("color", mauSacService.getAllMauSac());
                 model.addAttribute("size", kichThuocService.getAllKichThuoc());
+                model.addAttribute("category", categoryService.getAllSanPham());
                 model.addAttribute("productDetails", spct); // Retain the form data
                 return "san_pham_chi_tiet/create";
             } else {
                 System.out.println("Them moi");
-                this.sanPhamChiTietService.saveSanPhamChiTiet(spct);
-                return "redirect:/admin/spct";
+                storageService.store(file);
+                String fileName = file.getOriginalFilename();
+                spct.setImage(fileName);
+                if (sanPhamChiTietService.saveSanPhamChiTiet(spct)) {
+                    return "redirect:/admin/spct";
+                } else {
+//                this.sanPhamChiTietService.saveSanPhamChiTiet(spct);
+                    return "san_pham_chi_tiet/create";
+                }
             }
         }
     }
 
 
     // View edit
-// View edit
     @GetMapping("spct/edit/{id}")
     public String edit(@PathVariable("id") Integer id, Model model) {
         if (!isLoggedIn()) {
@@ -128,6 +131,7 @@ public class SanPhamChiTietController {
                 model.addAttribute("sanPhamChiTiet", spct.get()); // Đặt attribute với key đúng
                 model.addAttribute("product", sanPhamService.getAllSanPham());
                 model.addAttribute("color", mauSacService.getAllMauSac());
+                model.addAttribute("category", categoryService.getAllSanPham());
                 model.addAttribute("size", kichThuocService.getAllKichThuoc());
                 return "san_pham_chi_tiet/edit";
             } else {

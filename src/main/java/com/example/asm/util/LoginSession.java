@@ -1,5 +1,6 @@
 package com.example.asm.util;
 
+import com.example.asm.model.KhachHang;
 import com.example.asm.model.NhanVien;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoginSession {
     public static NhanVien nhanVien = null;
+    public static KhachHang khachHang = null;
     // Kiểm tra xem đã đăng nhập chưa
     public static boolean isLogin (){
         return LoginSession.nhanVien != null;
@@ -25,4 +27,15 @@ public class LoginSession {
     public static void logout() {
         LoginSession.nhanVien = null;
     }
+    // Kiểm tra xem có phải là khách hàng đã đăng nhập chưa
+    public static boolean isKhachHangLogin() {
+        return LoginSession.khachHang!= null;
+    }
+
+    // Set giá trị cho biến khách hàng khi đăng nhập thành công
+    public static void setKhachHang(KhachHang khachHang) {
+        LoginSession.khachHang = khachHang;
+    }
+
+    // Kiểm xem có phải là khách hàng hay không
 }

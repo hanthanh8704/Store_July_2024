@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security6">
+<head th:replace="/admin/layout/head :: head"></head>
+
+<body>
+
+<!-- Header -->
+<div th:replace="admin/layout/header :: header"></div>
+
+<!-- Side bar -->
+<div th:replace="admin/layout/sidebar :: sidebar"></div>
+<!-- Main -->
+<div th:replace="admin/layout/main :: main">
+    <h1>Đây là trang admin</h1>
+</div>
+
+  <!-- ======= Footer ======= -->
+<div th:replace="admin/layout/footer :: footer"></div>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+<div th:replace="admin/layout/script :: script"></div>
+</body>
+
+</html>

@@ -1,5 +1,6 @@
 package com.example.asm.repository;
 
+import com.example.asm.model.KhachHang;
 import com.example.asm.model.NhanVien;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,4 +13,6 @@ import java.util.List;
 @EnableJpaRepositories
 public interface LoginRepository extends JpaRepository<NhanVien,Integer> {
     NhanVien findByUsernameAndPassword(String username, String password);
+    KhachHang findKhachHangByUsernameAndPassword(String username, String password);
+
 }

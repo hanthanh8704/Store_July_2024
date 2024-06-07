@@ -23,6 +23,9 @@ public class SanPhamChiTiet {
     @Column(name = "ma_spct")
     private String maSpct;
 
+    @Column(name = "image")
+    private String image;
+
     @NotNull(message = "Số lượng không được để trống")
     @Min(value = 1, message = "Số lượng phải lớn hơn 0")
     @Column(name = "so_luong")
@@ -36,6 +39,9 @@ public class SanPhamChiTiet {
     @NotNull(message = "Trạng thái không được để trống")
     @Column(name = "trang_thai")
     private Integer trangThai;
+    @ManyToOne
+    @JoinColumn(name = "cate_id")
+    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "san_pham_id")

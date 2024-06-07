@@ -1,7 +1,5 @@
 package com.example.asm.service.impl;
 
-import com.example.asm.model.HoaDon;
-import com.example.asm.model.HoaDonChiTiet;
 import com.example.asm.model.SanPhamChiTiet;
 import com.example.asm.repository.HoaDonChiTietRepository;
 import com.example.asm.repository.SanPhamChiTietRepository;
@@ -30,8 +28,9 @@ public class SanPhamChiTietImpl implements SanPhamChiTietService {
     }
 
     @Override
-    public void saveSanPhamChiTiet(SanPhamChiTiet sanPhamChiTiet) {
+    public boolean saveSanPhamChiTiet(SanPhamChiTiet sanPhamChiTiet) {
         sanPhamChiTietRepository.save(sanPhamChiTiet);
+        return false;
     }
 
     @Override

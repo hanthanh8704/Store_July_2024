@@ -77,4 +77,9 @@ public class KhachHangImpl implements KhachHangService {
         list = list.subList(start, end);
         return new PageImpl<KhachHang>(list, pageable, this.searchKhachHang(keyword).size());
     }
+
+    @Override
+    public KhachHang findKhachHangByUsernameAndPassword(String username, String password) {
+        return khachHangRepository.findKhachHangByUsernameAndPassword(username,password);
+    }
 }
