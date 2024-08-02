@@ -76,7 +76,7 @@
                                 <span class="qty-down">-</span>
                             </div>
                         </div>
-                        <button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
+                        <a class="btn btn-primary" th:href="@{/add-to-cart/{id}(id=${productDetail.id})}">Thêm vào giỏ hàng</a>
                         <a class="btn btn-info" type="button">Mua ngay</a>
                     </div>
 

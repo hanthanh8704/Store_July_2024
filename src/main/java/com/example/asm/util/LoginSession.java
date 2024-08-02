@@ -12,24 +12,30 @@ import org.springframework.stereotype.Component;
 public class LoginSession {
     public static NhanVien nhanVien = null;
     public static KhachHang khachHang = null;
+
     // Kiểm tra xem đã đăng nhập chưa
-    public static boolean isLogin (){
+    public static boolean isLogin() {
         return LoginSession.nhanVien != null;
     }
+
     // Set giá trị cho biến nhân viên khi đăng nhập thành công
     public static void setNhanVien(NhanVien nhanVien) {
         LoginSession.nhanVien = nhanVien;
     }
+
     // Kiểm tra xem nhân viên đó là admin hay không
     public static boolean isAdmin() {
-        return LoginSession.nhanVien.getUsername().equals("Admin");
+        return LoginSession.nhanVien != null && LoginSession.nhanVien.getUsername().equals("Admin");
     }
+
     public static void logout() {
         LoginSession.nhanVien = null;
+        LoginSession.khachHang = null;
     }
+
     // Kiểm tra xem có phải là khách hàng đã đăng nhập chưa
     public static boolean isKhachHangLogin() {
-        return LoginSession.khachHang!= null;
+        return LoginSession.khachHang != null;
     }
 
     // Set giá trị cho biến khách hàng khi đăng nhập thành công
@@ -37,5 +43,8 @@ public class LoginSession {
         LoginSession.khachHang = khachHang;
     }
 
-    // Kiểm xem có phải là khách hàng hay không
+    // Lấy khách hàng đã đăng nhập
+    public static KhachHang getAccount() {
+        return khachHang;
+    }
 }

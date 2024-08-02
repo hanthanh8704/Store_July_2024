@@ -1,10 +1,14 @@
 package com.example.asm.controller;
 
 import com.example.asm.model.*;
+import com.example.asm.repository.CartDetailRepository;
+import com.example.asm.repository.CartRepository;
 import com.example.asm.service.KhachHangService;
 import com.example.asm.service.LoginService;
 import com.example.asm.service.UserService;
+import com.example.asm.service.impl.CartImpl;
 import com.example.asm.util.LoginSession;
+import com.example.asm.util.Timestamp;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,11 +25,17 @@ public class UserController {
     private final KhachHangService khachHangService;
     private final LoginSession loginSession;
     private final LoginService loginService;
+    private final CartImpl cartsService;
+    private final CartRepository cartRepository;
+    private final CartDetailRepository orderDetailRepository;
 
-    public UserController(KhachHangService khachHangService, LoginSession loginSession, LoginService loginService) {
+    public UserController(KhachHangService khachHangService, LoginSession loginSession, LoginService loginService, CartImpl cartsService, CartRepository cartRepository, CartDetailRepository orderDetailRepository) {
         this.khachHangService = khachHangService;
         this.loginSession = loginSession;
         this.loginService = loginService;
+        this.cartsService = cartsService;
+        this.cartRepository = cartRepository;
+        this.orderDetailRepository = orderDetailRepository;
     }
 //    @RequestMapping("/")
 //    public String home(Model model) {
@@ -177,4 +187,102 @@ public class UserController {
         }
         return "/user/layout/login";
     }
+
+    @ModelAttribute("cart")
+    CartImpl getCartService() {
+        return cartsService;
+    }
+
+    @GetMapping("/gioHang")
+    public String cart(Model model) {
+//        if (LoginSession.isLogin()) {
+//            return "cart";
+//        } else {
+//            model.addAttribute("khachHang", new KhachHang());
+//            return "login";
+//        }
+        return "user/cart";
+    }
+
+
+    // Hàm này dùng để thêm sản phẩm vào giỏ hàng
+    @RequestMapping("/add-to-cart/{id}")
+    public String addToCart(@PathVariable("id") Integer id, Model model) {
+//        if (LoginSession.isLogin()) {
+//            System.out.println("bat dau them san pham chi tiet");
+//            cartsService.add(id);
+//            return "redirect:/gioHang";
+//        } else {
+//            model.addAttribute("khachHang", new NhanVien());
+//            return "login";
+//        }
+        cartsService.add(id);
+        return "redirect:/gioHang";
+    }
+
+    @RequestMapping("/update-cart/{id}")
+    public String updateCart(@PathVariable("id") Integer id, @RequestParam("quantity") Integer quantity, Model model) {
+//        if (LoginSession.isLogin()) {
+//            cartsService.update(id, quantity);
+//            return "redirect:/gioHang";
+//        } else {
+//            model.addAttribute("nhanVien", new Accounts());
+//            return "login";
+//        }
+        cartsService.update(id, quantity);
+        return "redirect:/gioHang";
+    }
+
+    @RequestMapping("/remove-cart/{id}")
+    public String removeCart(@PathVariable("id") Integer id, Model model) {
+//        if (LoginSession.isLogin()) {
+//            cartsService.remove(id);
+//            return "redirect:/gioHang";
+//        } else {
+//            model.addAttribute("nhanVien", new Accounts());
+//            return "login";
+//        }
+        cartsService.remove(id);
+        return "redirect:/gioHang";
+    }
+
+    @GetMapping("/checkout")
+    public String confirm() {
+//        if (LoginSession.isAdmin()) {
+//            return "checkout";
+//        }
+//        return "checkout";
+        return "user/checkout";
+    }
+
+
+    @PostMapping("/purchase")
+    public String purchase(@RequestParam String address, Model model) {
+        if (LoginSession.isLogin()) {
+            System.out.println("address=" + address);
+            System.out.println("items=" + cartsService.getItems());
+            KhachHang acc = LoginSession.getAccount();
+            System.out.println(acc);
+            System.out.println("Account : " + acc.getUsername() + " Password : " + acc.getPassword());
+            if (acc != null) {
+                Cart order = new Cart();
+                order.setKhachHang(acc);
+                order.setDiaChi(address);
+                order.setCreatedAt(Timestamp.timeNow()); // Sử dụng phương thức timeNow()
+                cartRepository.save(order);
+
+                // Lưu chi tiết đơn hàng
+                for (CartDetail item : cartsService.getItems()) {
+                    item.setCart(order);
+                    orderDetailRepository.save(item);
+                }
+            }
+            cartsService.clear();
+            return "redirect:/";
+        } else {
+            model.addAttribute("khachHang", new KhachHang());
+            return "/user/layout/login";
+        }
+    }
+
 }
